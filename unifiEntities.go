@@ -1,5 +1,13 @@
 package gounifi
 
+//AuthResponse - Response back from an auth request
+type AuthResponse struct {
+	Meta struct {
+		Rc string `json:"rc"`
+	} `json:"meta"`
+	Data []interface{}
+}
+
 //SiteHealth - Site Health entity
 type SiteHealth struct {
 	Meta struct {

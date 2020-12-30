@@ -2,13 +2,16 @@ package gounifi
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/json"
-	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"net/http/cookiejar"
-	"golang.org/x/net/publicsuffix"
+	"strings"
 	"time"
+
+	"golang.org/x/net/publicsuffix"
 )
 
 const (
@@ -26,10 +29,11 @@ type Client struct {
 
 // NewClient - Create a new API Client
 func NewClient(username string, password string, site string) *Client {
-	
+
 	jar, err := cookiejar.New(&cookiejar.Options{PublicSuffixList: publicsuffix.List})
-	if err != nil { // TODO: error handling }
-		
+	if err != nil { // TODO: error handling
+	}
+
 	return &Client{
 		BaseURL:    baseURL,
 		userName:   username,
@@ -40,10 +44,10 @@ func NewClient(username string, password string, site string) *Client {
 
 }
 
-//SiteHealth Calls /api/s/default/stat/health
-func (c *Client) SiteHealth(ctx context.Context) (*SiteHealth, error) {
+//GetSiteHealth Calls /api/s/default/stat/health
+func (c *Client) GetSiteHealth(ctx context.Context) (*SiteHealth, error) {
 
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s//s/%s//stat//health", c.BaseURL, c.site), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/s/%s/stat/health", c.BaseURL, c.site), nil)
 
 	if err != nil {
 		return nil, err
@@ -54,26 +58,86 @@ func (c *Client) SiteHealth(ctx context.Context) (*SiteHealth, error) {
 	result := SiteHealth{}
 
 	if err := c.sendRequest(req, &result); err != nil {
+		log.Println("ERROR: " + err.Error())
 		return nil, err
 	}
 
 	return &result, nil
 }
 
-func (c *Client) sendRequest(req *http.Request, v interface{}) error {
+// There must be a better way of doing this?
+func (c *Client) loginToken() (string, error) {
 
-	
-	// Do we have a login token?
-	for _, cookie := range c.HTTPClient.Jar.Cookies() {
-		fmt.Println(cookie.Name)
+	loginToken := ""
+
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	url := baseURL + "/login"
+
+	payload := strings.NewReader("{\"username\":\"" + c.userName + "\",\"password\":\"" + c.password + "\"}")
+
+	req, _ := http.NewRequest("POST", url, payload)
+
+	req.Header.Add("Content-Type", "text/plain")
+	req.Header.Add("User-Agent", "Golang")
+	req.Header.Add("Accept", "*/*")
+	req.Header.Add("Cache-Control", "no-cache")
+	req.Header.Add("accept-encoding", "gzip, deflate")
+	req.Header.Add("content-length", "44")
+	req.Header.Add("Connection", "keep-alive")
+	req.Header.Add("cache-control", "no-cache")
+
+	res, err := http.DefaultClient.Do(req)
+
+	if err != nil {
+		log.Println("ERROR: " + err.Error())
+		return "", err
 	}
 
-	/*
+	defer res.Body.Close()
+
+	authResponse := AuthResponse{}
+
+	if err = json.NewDecoder(res.Body).Decode(&authResponse); err != nil {
+		return "", err
+	}
+	// log.Println("Auth: " + authResponse.Meta.Rc)
+	// body, _ := ioutil.ReadAll(res.Body)
+	// log.Println("Auth Response: " + string(body))
+
+	for _, cookie := range res.Cookies() {
+		if cookie.Name == "unifises" {
+			loginToken = cookie.Value
+		}
+	}
+
+	return loginToken, nil
+}
+
+func (c *Client) sendRequest(req *http.Request, v interface{}) error {
+
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.apiKey))
 
+	// Get Login Token
+	token, err := c.loginToken()
+
+	if err != nil {
+		return err
+	}
+
+	// Create the login cookie. Not sure what the expiry time should be.
+	// Dont think it matters since we grab a new one each time. TODO: Investigate options here.
+	expire := time.Now().Add(30 * time.Minute)
+	cookie := http.Cookie{
+		Name:    "unifises",
+		Value:   token,
+		Expires: expire,
+	}
+
+	cookies := []*http.Cookie{&cookie}
+	c.HTTPClient.Jar.SetCookies(req.URL, cookies)
 	res, err := c.HTTPClient.Do(req)
+
 	if err != nil {
 		return err
 	}
@@ -81,20 +145,12 @@ func (c *Client) sendRequest(req *http.Request, v interface{}) error {
 	defer res.Body.Close()
 
 	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusBadRequest {
-		var errRes errorResponse
-		if err = json.NewDecoder(res.Body).Decode(&errRes); err == nil {
-			return errors.New(errRes.Message)
-		}
-
-		return fmt.Errorf("unknown error, status code: %d", res.StatusCode)
+		return fmt.Errorf("HTTP Error, Status code: %d", res.StatusCode)
 	}
 
-	fullResponse := successResponse{
-		Data: v,
-	}
-	if err = json.NewDecoder(res.Body).Decode(&fullResponse); err != nil {
+	if err = json.NewDecoder(res.Body).Decode(&v); err != nil {
 		return err
-	} */
+	}
 
 	return nil
 }
