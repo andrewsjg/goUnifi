@@ -67,7 +67,7 @@ func (c *Client) GetSiteHealth(ctx context.Context) (*SiteHealth, error) {
 }
 
 //GetDevices Calls /api/s/<site>/stat/device
-func (c *Client) GetDevices(ctx context.Context) (*Devices, error) {
+func (c *Client) getDevices(ctx context.Context) (*Devices, error) {
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/s/%s/stat/device", c.BaseURL, c.site), nil)
 
 	if err != nil {
@@ -84,6 +84,25 @@ func (c *Client) GetDevices(ctx context.Context) (*Devices, error) {
 	}
 
 	return &result, nil
+}
+
+//GetSiteDevices - Returns a map of all the devices in a site
+func (c *Client) GetSiteDevices(ctx context.Context) (SiteDevices, error) {
+	devices, err := c.getDevices(ctx)
+	var siteDevices SiteDevices = make(SiteDevices)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for _, device := range devices.Data {
+		usg := USG{}
+		if usg.unmarshal(device) {
+			siteDevices["USG"] = append(siteDevices["USG"], usg)
+		}
+	}
+
+	return siteDevices, nil
 }
 
 // There must be a better way of doing this?

@@ -261,14 +261,13 @@ type Devices struct {
 	Data []json.RawMessage `json:"data"`
 }
 
-//SiteDevices is a container for all devices in a site
-// TODO: Find a more elegant way to do this
-type SiteDevices struct {
-	USG          []USG
-	US8P60Switch []US8P60Switch
-	U7LRWifiAP   []U7LRWifiAP
-	USC8Switch   []USC8Switch
-}
+// TODO: Try and Find a more elegant way to do this
+
+//UbiquitiDevices - A static catalog of Ubquiti Devices that are known to this client
+var UbiquitiDevices = [...]string{"USG", "US8P60Switch", "U7LRWifiAP", "USC8Switch"}
+
+//SiteDevices is a container for all devices in a site. The key should alsays be one of the devices listed in the catalog above
+type SiteDevices map[string][]interface{}
 
 //USG - Security Gateway
 type USG struct {
