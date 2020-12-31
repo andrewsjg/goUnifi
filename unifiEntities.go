@@ -198,7 +198,10 @@ type ActiveClients struct {
 }
 
 // Below are the types that represent the various Ubiquiti components. There is are a lot of redundant fields here. A later task is to
-// make them more generic where possible
+// make them more generic where possible.
+
+// TODO: Break out the common blocks into separate types to avoid repition
+// TODO: Work out how to make these more generic while still retaining the rich structures for each device type
 
 //DeviceBasic - Basic information about a network device
 type DeviceBasic struct {
