@@ -1,6 +1,10 @@
 package gounifi
 
-import "time"
+import (
+	"bytes"
+	"encoding/json"
+	"time"
+)
 
 //AuthResponse - Response back from an auth request. The data field is always empty.
 type AuthResponse struct {
@@ -197,6 +201,34 @@ type ActiveClients struct {
 	} `json:"data"`
 }
 
+// User - List of all configured/known clients on the site
+type User struct {
+	Meta struct {
+		Rc string `json:"rc"`
+	} `json:"meta"`
+	Data []struct {
+		ID                  string `json:"_id"`
+		Mac                 string `json:"mac"`
+		SiteID              string `json:"site_id"`
+		Oui                 string `json:"oui,omitempty"`
+		IsGuest             bool   `json:"is_guest,omitempty"`
+		FirstSeen           int    `json:"first_seen,omitempty"`
+		LastSeen            int    `json:"last_seen,omitempty"`
+		IsWired             bool   `json:"is_wired,omitempty"`
+		Hostname            string `json:"hostname,omitempty"`
+		Blocked             bool   `json:"blocked,omitempty"`
+		FingerprintOverride bool   `json:"fingerprint_override,omitempty"`
+		DevIDOverride       int    `json:"dev_id_override,omitempty"`
+		UsergroupID         string `json:"usergroup_id,omitempty"`
+		Name                string `json:"name,omitempty"`
+		Noted               bool   `json:"noted,omitempty"`
+		UseFixedip          bool   `json:"use_fixedip,omitempty"`
+		NetworkID           string `json:"network_id,omitempty"`
+		FixedIP             string `json:"fixed_ip,omitempty"`
+		Note                string `json:"note,omitempty"`
+	} `json:"data"`
+}
+
 // Below are the types that represent the various Ubiquiti components. There is are a lot of redundant fields here. A later task is to
 // make them more generic where possible.
 
@@ -220,12 +252,22 @@ type DeviceBasic struct {
 }
 
 //Devices - Contains the details for all the devices in the system. Because we dont know what we will get back in terms of combinations of devices
-//			an empty interface is used which will then be parsed out to the concrete types at runtime. At least that is the plan!
+//			an empty interface is used which can then be parsed out to the concrete types at runtime. At least that is the plan!
 type Devices struct {
 	Meta struct {
 		Rc string `json:"rc"`
 	} `json:"meta"`
-	Data []interface{} `json:"data"`
+	//Data []interface{} `json:"data"`
+	Data []json.RawMessage `json:"data"`
+}
+
+//SiteDevices is a container for all devices in a site
+// TODO: Find a more elegant way to do this
+type SiteDevices struct {
+	USG          []USG
+	US8P60Switch []US8P60Switch
+	U7LRWifiAP   []U7LRWifiAP
+	USC8Switch   []USC8Switch
 }
 
 //USG - Security Gateway
@@ -474,17 +516,17 @@ type USG struct {
 			Gw            string    `json:"gw"`
 			Time          int64     `json:"time"`
 			Datetime      time.Time `json:"datetime"`
-			Duration      int       `json:"duration"`
-			WanRxPackets  int       `json:"wan-rx_packets"`
-			WanRxBytes    int64     `json:"wan-rx_bytes"`
-			WanTxPackets  int       `json:"wan-tx_packets"`
-			WanTxBytes    int64     `json:"wan-tx_bytes"`
-			LanRxPackets  int       `json:"lan-rx_packets"`
-			LanRxBytes    int64     `json:"lan-rx_bytes"`
-			LanTxPackets  int       `json:"lan-tx_packets"`
-			LanTxBytes    int64     `json:"lan-tx_bytes"`
+			Duration      float64   `json:"duration"`
+			WanRxPackets  float64   `json:"wan-rx_packets"`
+			WanRxBytes    float64   `json:"wan-rx_bytes"`
+			WanTxPackets  float64   `json:"wan-tx_packets"`
+			WanTxBytes    float64   `json:"wan-tx_bytes"`
+			LanRxPackets  float64   `json:"lan-rx_packets"`
+			LanRxBytes    float64   `json:"lan-rx_bytes"`
+			LanTxPackets  float64   `json:"lan-tx_packets"`
+			LanTxBytes    float64   `json:"lan-tx_bytes"`
 			Lan2TxPackets float64   `json:"lan2-tx_packets"`
-			Lan2TxBytes   int       `json:"lan2-tx_bytes"`
+			Lan2TxBytes   float64   `json:"lan2-tx_bytes"`
 			Lan2RxPackets float64   `json:"lan2-rx_packets"`
 			Lan2RxBytes   float64   `json:"lan2-rx_bytes"`
 			Lan2RxDropped float64   `json:"lan2-rx_dropped"`
@@ -504,32 +546,17 @@ type USG struct {
 	XHasSSHHostkey bool  `json:"x_has_ssh_hostkey"`
 }
 
-// User - List of all configured/known clients on the site
-type User struct {
-	Meta struct {
-		Rc string `json:"rc"`
-	} `json:"meta"`
-	Data []struct {
-		ID                  string `json:"_id"`
-		Mac                 string `json:"mac"`
-		SiteID              string `json:"site_id"`
-		Oui                 string `json:"oui,omitempty"`
-		IsGuest             bool   `json:"is_guest,omitempty"`
-		FirstSeen           int    `json:"first_seen,omitempty"`
-		LastSeen            int    `json:"last_seen,omitempty"`
-		IsWired             bool   `json:"is_wired,omitempty"`
-		Hostname            string `json:"hostname,omitempty"`
-		Blocked             bool   `json:"blocked,omitempty"`
-		FingerprintOverride bool   `json:"fingerprint_override,omitempty"`
-		DevIDOverride       int    `json:"dev_id_override,omitempty"`
-		UsergroupID         string `json:"usergroup_id,omitempty"`
-		Name                string `json:"name,omitempty"`
-		Noted               bool   `json:"noted,omitempty"`
-		UseFixedip          bool   `json:"use_fixedip,omitempty"`
-		NetworkID           string `json:"network_id,omitempty"`
-		FixedIP             string `json:"fixed_ip,omitempty"`
-		Note                string `json:"note,omitempty"`
-	} `json:"data"`
+func (u *USG) unmarshal(raw json.RawMessage) bool {
+	dec := json.NewDecoder(bytes.NewReader(raw))
+
+	// This could cause issues down the road if new fields are added.
+	dec.DisallowUnknownFields()
+
+	if err := dec.Decode(u); err != nil {
+		return false
+	}
+
+	return true
 }
 
 //US8P60Switch - 60W PoE 8 port switch

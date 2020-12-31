@@ -45,7 +45,7 @@ func NewClient(username string, password string, site string) *Client {
 
 }
 
-//GetSiteHealth Calls /api/s/default/stat/health
+//GetSiteHealth Calls /api/s/<site>/stat/health
 func (c *Client) GetSiteHealth(ctx context.Context) (*SiteHealth, error) {
 
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/s/%s/stat/health", c.BaseURL, c.site), nil)
@@ -57,6 +57,26 @@ func (c *Client) GetSiteHealth(ctx context.Context) (*SiteHealth, error) {
 	req = req.WithContext(ctx)
 
 	result := SiteHealth{}
+
+	if err := c.sendRequest(req, &result); err != nil {
+		log.Println("ERROR: " + err.Error())
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+//GetDevices Calls /api/s/<site>/stat/device
+func (c *Client) GetDevices(ctx context.Context) (*Devices, error) {
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/s/%s/stat/device", c.BaseURL, c.site), nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+
+	result := Devices{}
 
 	if err := c.sendRequest(req, &result); err != nil {
 		log.Println("ERROR: " + err.Error())
