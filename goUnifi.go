@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -100,9 +101,13 @@ func (c *Client) loginToken() (string, error) {
 	if err = json.NewDecoder(res.Body).Decode(&authResponse); err != nil {
 		return "", err
 	}
-	// log.Println("Auth: " + authResponse.Meta.Rc)
-	// body, _ := ioutil.ReadAll(res.Body)
-	// log.Println("Auth Response: " + string(body))
+
+	if authResponse.Meta.Rc != "ok" {
+		return "", errors.New("API Authentication Failed")
+	}
+
+	//body, _ := ioutil.ReadAll(res.Body)
+	//log.Println("Auth Response: " + string(body))
 
 	for _, cookie := range res.Cookies() {
 		if cookie.Name == "unifises" {

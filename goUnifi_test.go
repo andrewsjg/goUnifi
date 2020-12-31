@@ -19,6 +19,7 @@ func TestHealth(t *testing.T) {
 
 	if err != nil {
 		t.Errorf("SiteHealth returned an error: %s", err)
+		return
 	}
 
 	for _, subsys := range siteHealth.Data {
