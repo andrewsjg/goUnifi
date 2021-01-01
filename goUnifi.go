@@ -96,7 +96,34 @@ func (c *Client) GetSiteDevices(ctx context.Context) (SiteDevices, error) {
 	}
 
 	for _, device := range devices.Data {
+
 		usg := USG{}
+		/*
+			USC8Switch := USC8Switch{}
+			U7LRWifiAP := U7LRWifiAP{}
+			US8P60Switch := US8P60Switch{}
+		*/
+
+		// Work out the model of the device
+		tmp := make(map[string]interface{})
+		err := json.Unmarshal(device, &tmp)
+
+		if err != nil {
+			fmt.Printf("Error parsing JSON string - %s", err)
+		}
+
+		iModel, ok := tmp["model"]
+
+		if ok {
+			model, ok := iModel.(string)
+
+			if ok {
+				// Do something with Model.
+				fmt.Println("Device Model is: " + model)
+
+			}
+		}
+
 		if usg.unmarshal(device) {
 			siteDevices["USG"] = append(siteDevices["USG"], usg)
 		}

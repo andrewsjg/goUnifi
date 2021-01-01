@@ -264,7 +264,7 @@ type Devices struct {
 // TODO: Try and Find a more elegant way to do this
 
 //UbiquitiDevices - A static catalog of Ubquiti Devices that are known to this client
-var UbiquitiDevices = [...]string{"USG", "US8P60Switch", "U7LRWifiAP", "USC8Switch"}
+var UbiquitiDevices = []string{"USG", "US8P60Switch", "U7LRWifiAP", "USC8Switch"}
 
 //SiteDevices is a container for all devices in a site. The key should alsays be one of the devices listed in the catalog above
 type SiteDevices map[string][]interface{}
@@ -760,6 +760,19 @@ type US8P60Switch struct {
 	XHasSSHHostkey   bool          `json:"x_has_ssh_hostkey"`
 }
 
+func (u *US8P60Switch) unmarshal(raw json.RawMessage) bool {
+	dec := json.NewDecoder(bytes.NewReader(raw))
+
+	// This could cause issues down the road if new fields are added.
+	dec.DisallowUnknownFields()
+
+	if err := dec.Decode(u); err != nil {
+		return false
+	}
+
+	return true
+}
+
 //U7LRWifiAP - U7 Long Range Wifi AP
 type U7LRWifiAP struct {
 	ID         string        `json:"_id"`
@@ -1250,6 +1263,19 @@ type U7LRWifiAP struct {
 	XHasSSHHostkey  bool          `json:"x_has_ssh_hostkey"`
 }
 
+func (u *U7LRWifiAP) unmarshal(raw json.RawMessage) bool {
+	dec := json.NewDecoder(bytes.NewReader(raw))
+
+	// This could cause issues down the road if new fields are added.
+	dec.DisallowUnknownFields()
+
+	if err := dec.Decode(u); err != nil {
+		return false
+	}
+
+	return true
+}
+
 //USC8Switch - 8 Port PoE passthrough switch
 type USC8Switch struct {
 	ID            string `json:"_id"`
@@ -1446,6 +1472,19 @@ type USC8Switch struct {
 	UserNumSta       int         `json:"user-num_sta"`
 	GuestNumSta      int         `json:"guest-num_sta"`
 	XHasSSHHostkey   bool        `json:"x_has_ssh_hostkey"`
+}
+
+func (u *USC8Switch) unmarshal(raw json.RawMessage) bool {
+	dec := json.NewDecoder(bytes.NewReader(raw))
+
+	// This could cause issues down the road if new fields are added.
+	dec.DisallowUnknownFields()
+
+	if err := dec.Decode(u); err != nil {
+		return false
+	}
+
+	return true
 }
 
 //SwitchStats -  Stats data for an 8 port switch. I will add more ports defitions when I see the same stats structure for a bigger switch. Can use 'omitempty' to remove fields

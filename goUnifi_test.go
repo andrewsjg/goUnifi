@@ -69,6 +69,7 @@ func TestSiteDevices(t *testing.T) {
 		// This feels a bit wrong. We know this will always be an interface to a USG so it can be cast without error. But it would be nicer if siteDevices was a list
 		// of concrete objects of the correct type. Something like siteDevices.usg[0].Model. This can be done with a struct instead of a map, but then
 		// it will have a static set of arrays for each device type which is equally ugly.
+		
 		fmt.Println("Found a USG with Model: " + siteDevices["USG"][0].(USG).Model)
 	}
 
