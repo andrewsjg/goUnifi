@@ -65,6 +65,9 @@ func TestSiteDevices(t *testing.T) {
 		return
 	}
 
-	fmt.Println("SD TEST")
-	fmt.Println(siteDevices.UGW3)
+	fmt.Printf("USG Count      : %d\n", len(siteDevices.UGW3))
+	fmt.Printf("U7LR Count     : %d\n", len(siteDevices.U7LR))
+	fmt.Printf("US8P60 Count   : %d\n", len(siteDevices.US8P60))
+	fmt.Printf("USC8 Count     : %d\n", len(siteDevices.USC8))
+	fmt.Printf("UNKNOWN Count  : %d\n", len(siteDevices.MODELUNKNOWN))
 }

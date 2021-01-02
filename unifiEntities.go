@@ -3,16 +3,9 @@ package gounifi
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"time"
 )
-
-// DeviceFactory - An experiment
-var deviceFactory = map[string]func() interface{}{
-	"UGW3":   func() interface{} { return UGW3{} },
-	"US8P60": func() interface{} { return US8P60{} },
-	"USC8":   func() interface{} { return USC8{} },
-	"U7LR":   func() interface{} { return U7LR{} },
-}
 
 //AuthResponse - Response back from an auth request. The data field is always empty.
 type AuthResponse struct {
@@ -286,12 +279,58 @@ type SiteDevices struct {
 }
 
 //Update sitedevices
-func (sd *SiteDevices) Update(model string, ) {
-	switch model {
-	case "UGW3":
-		device := UGW3{}
-		
+func (sd *SiteDevices) Update(deviceData json.RawMessage) error {
+
+	// Work out the model of the device
+	tmp := make(map[string]interface{})
+	err := json.Unmarshal(deviceData, &tmp)
+
+	if err != nil {
+		return err
 	}
+
+	iModel, ok := tmp["model"]
+
+	if ok {
+		model, ok := iModel.(string)
+
+		if !ok {
+			return errors.New("Unable to determine model")
+		}
+
+		// Add model to SiteDevices
+
+		switch model {
+		case "UGW3":
+			device := UGW3{}
+			json.Unmarshal(deviceData, &device)
+			sd.UGW3 = append(sd.UGW3, device)
+
+		case "US8P60":
+			device := US8P60{}
+			json.Unmarshal(deviceData, &device)
+			sd.US8P60 = append(sd.US8P60, device)
+
+		case "USC8":
+			device := USC8{}
+			json.Unmarshal(deviceData, &device)
+			sd.USC8 = append(sd.USC8, device)
+
+		case "U7LR":
+			device := U7LR{}
+			json.Unmarshal(deviceData, &device)
+			sd.U7LR = append(sd.U7LR, device)
+
+		default:
+			var device interface{}
+			json.Unmarshal(deviceData, &device)
+			sd.MODELUNKNOWN = append(sd.MODELUNKNOWN, device)
+
+		}
+
+	}
+
+	return nil
 }
 
 //UGW3 - Security Gateway
