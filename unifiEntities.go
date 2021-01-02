@@ -609,19 +609,6 @@ type UGW3 struct {
 	XHasSSHHostkey bool  `json:"x_has_ssh_hostkey"`
 }
 
-func (u *UGW3) Unmarshal(raw json.RawMessage) bool {
-	dec := json.NewDecoder(bytes.NewReader(raw))
-
-	// This could cause issues down the road if new fields are added.
-	dec.DisallowUnknownFields()
-
-	if err := dec.Decode(u); err != nil {
-		return false
-	}
-
-	return true
-}
-
 //US8P60 - 60W PoE 8 port switch
 type US8P60 struct {
 	ID            string `json:"_id"`

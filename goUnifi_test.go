@@ -33,27 +33,6 @@ func TestHealth(t *testing.T) {
 
 }
 
-func TestDevices(t *testing.T) {
-	client := createClient()
-	ctx := context.Background()
-
-	devices, err := client.getDevices(ctx)
-
-	if err != nil {
-		t.Errorf("getDevices returned an error: %s", err)
-		return
-	}
-
-	for _, device := range devices.Data {
-		//fmt.Println(string(device))
-		usg := new(UGW3)
-		if usg.Unmarshal(device) {
-			fmt.Println("Found a USG with model: " + usg.Model)
-		}
-
-	}
-}
-
 func TestSiteDevices(t *testing.T) {
 	client := createClient()
 	ctx := context.Background()
