@@ -222,3 +222,94 @@ type User struct {
 		Note                string `json:"note,omitempty"`
 	} `json:"data"`
 }
+
+// Clients - A list of active clients on the network
+type Clients struct {
+	Meta struct {
+		Rc string `json:"rc"`
+	} `json:"meta"`
+	Data []struct {
+		SiteID              string `json:"site_id"`
+		AssocTime           int    `json:"assoc_time"`
+		LatestAssocTime     int    `json:"latest_assoc_time"`
+		Oui                 string `json:"oui"`
+		UserID              string `json:"user_id"`
+		ID                  string `json:"_id"`
+		Mac                 string `json:"mac"`
+		IsGuest             bool   `json:"is_guest"`
+		FirstSeen           int    `json:"first_seen"`
+		LastSeen            int    `json:"last_seen"`
+		IsWired             bool   `json:"is_wired"`
+		Hostname            string `json:"hostname,omitempty"`
+		UsergroupID         string `json:"usergroup_id,omitempty"`
+		Name                string `json:"name,omitempty"`
+		Noted               bool   `json:"noted,omitempty"`
+		FingerprintOverride bool   `json:"fingerprint_override,omitempty"`
+		DevIDOverride       int    `json:"dev_id_override,omitempty"`
+		Blocked             bool   `json:"blocked,omitempty"`
+		UptimeByUap         int    `json:"_uptime_by_uap,omitempty"`
+		LastSeenByUap       int    `json:"_last_seen_by_uap,omitempty"`
+		IsGuestByUap        bool   `json:"_is_guest_by_uap,omitempty"`
+		ApMac               string `json:"ap_mac,omitempty"`
+		Channel             int    `json:"channel,omitempty"`
+		Radio               string `json:"radio,omitempty"`
+		RadioName           string `json:"radio_name,omitempty"`
+		Essid               string `json:"essid,omitempty"`
+		Bssid               string `json:"bssid,omitempty"`
+		PowersaveEnabled    bool   `json:"powersave_enabled,omitempty"`
+		Is11R               bool   `json:"is_11r,omitempty"`
+		Ccq                 int    `json:"ccq,omitempty"`
+		Rssi                int    `json:"rssi,omitempty"`
+		Noise               int    `json:"noise,omitempty"`
+		Signal              int    `json:"signal,omitempty"`
+		TxRate              int    `json:"tx_rate,omitempty"`
+		RxRate              int    `json:"rx_rate,omitempty"`
+		TxPower             int    `json:"tx_power,omitempty"`
+		Idletime            int    `json:"idletime,omitempty"`
+		IP                  string `json:"ip"`
+		DhcpendTime         int    `json:"dhcpend_time,omitempty"`
+		Satisfaction        int    `json:"satisfaction,omitempty"`
+		Anomalies           int    `json:"anomalies,omitempty"`
+		Vlan                int    `json:"vlan,omitempty"`
+		RadioProto          string `json:"radio_proto,omitempty"`
+		Uptime              int    `json:"uptime"`
+		TxBytes             int    `json:"tx_bytes"`
+		RxBytes             int    `json:"rx_bytes"`
+		TxPackets           int    `json:"tx_packets"`
+		TxRetries           int    `json:"tx_retries"`
+		WifiTxAttempts      int    `json:"wifi_tx_attempts"`
+		RxPackets           int    `json:"rx_packets"`
+		BytesR              int    `json:"bytes-r"`
+		TxBytesR            int    `json:"tx_bytes-r"`
+		RxBytesR            int    `json:"rx_bytes-r"`
+		Authorized          bool   `json:"authorized"`
+		QosPolicyApplied    bool   `json:"qos_policy_applied"`
+		UptimeByUsw         int    `json:"_uptime_by_usw,omitempty"`
+		LastSeenByUsw       int    `json:"_last_seen_by_usw,omitempty"`
+		IsGuestByUsw        bool   `json:"_is_guest_by_usw,omitempty"`
+		SwMac               string `json:"sw_mac,omitempty"`
+		SwDepth             int    `json:"sw_depth,omitempty"`
+		SwPort              int    `json:"sw_port,omitempty"`
+		Network             string `json:"network"`
+		NetworkID           string `json:"network_id"`
+		UptimeByUgw         int    `json:"_uptime_by_ugw"`
+		LastSeenByUgw       int    `json:"_last_seen_by_ugw"`
+		IsGuestByUgw        bool   `json:"_is_guest_by_ugw"`
+		GwMac               string `json:"gw_mac"`
+		WiredTxBytes        int    `json:"wired-tx_bytes,omitempty"`
+		WiredRxBytes        int    `json:"wired-rx_bytes,omitempty"`
+		WiredTxPackets      int    `json:"wired-tx_packets,omitempty"`
+		WiredRxPackets      int    `json:"wired-rx_packets,omitempty"`
+		WiredTxBytesR       int    `json:"wired-tx_bytes-r,omitempty"`
+		WiredRxBytesR       int    `json:"wired-rx_bytes-r,omitempty"`
+		UseFixedip          bool   `json:"use_fixedip,omitempty"`
+		FixedIP             string `json:"fixed_ip,omitempty"`
+		DevCat              int    `json:"dev_cat,omitempty"`
+		DevFamily           int    `json:"dev_family,omitempty"`
+		DevID               int    `json:"dev_id,omitempty"`
+		OsClass             int    `json:"os_class,omitempty"`
+		OsName              int    `json:"os_name,omitempty"`
+		DevVendor           int    `json:"dev_vendor,omitempty"`
+		Note                string `json:"note,omitempty"`
+	} `json:"data"`
+}

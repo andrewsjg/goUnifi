@@ -7,20 +7,20 @@ import (
 	"testing"
 )
 
-func createClient() *Client {
+func createClient() *Unifi {
 	userName := os.Getenv("UNIFI_USER")
 	password := os.Getenv("UNIFI_PASSWORD")
 
-	return NewClient(userName, password, "default")
+	return NewUnifi(userName, password, "default")
 
 }
 
 func TestHealth(t *testing.T) {
 
-	client := createClient()
+	unifi := createClient()
 
 	ctx := context.Background()
-	siteHealth, err := client.GetSiteHealth(ctx)
+	siteHealth, err := unifi.GetSiteHealth(ctx)
 
 	if err != nil {
 		t.Errorf("SiteHealth returned an error: %s", err)
@@ -34,10 +34,10 @@ func TestHealth(t *testing.T) {
 }
 
 func TestSiteDevices(t *testing.T) {
-	client := createClient()
+	unifi := createClient()
 	ctx := context.Background()
 
-	siteDevices, err := client.GetSiteDevices(ctx)
+	siteDevices, err := unifi.GetSiteDevices(ctx)
 
 	if err != nil {
 		t.Errorf("siteDevices returned an error: %s", err)
@@ -49,4 +49,18 @@ func TestSiteDevices(t *testing.T) {
 	fmt.Printf("US8P60 Count   : %d\n", len(siteDevices.US8P60))
 	fmt.Printf("USC8 Count     : %d\n", len(siteDevices.USC8))
 	fmt.Printf("UNKNOWN Count  : %d\n", len(siteDevices.MODELUNKNOWN))
+}
+
+func TestClients(t *testing.T) {
+	unifi := createClient()
+	ctx := context.Background()
+
+	clients, err := unifi.GetClients(ctx)
+
+	if err != nil {
+		t.Errorf("getClients returned an error: %s", err)
+		return
+	}
+
+	fmt.Printf("Found %d active clients on the network\n", len(clients.Data))
 }

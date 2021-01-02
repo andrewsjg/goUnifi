@@ -19,8 +19,8 @@ const (
 	baseURL = "https://unifi:8443/api"
 )
 
-// Client - API Client
-type Client struct {
+// Unifi - API Client
+type Unifi struct {
 	BaseURL    string
 	userName   string
 	password   string
@@ -28,14 +28,15 @@ type Client struct {
 	HTTPClient *http.Client
 }
 
-// NewClient - Create a new API Client
-func NewClient(username string, password string, site string) *Client {
+// NewUnifi - Create a new API Client
+func NewUnifi(username string, password string, site string) *Unifi {
 
+	// Not really using the cookie jar here. Leaving in place because I might revisit
 	jar, err := cookiejar.New(&cookiejar.Options{PublicSuffixList: publicsuffix.List})
 	if err != nil { // TODO: error handling
 	}
 
-	return &Client{
+	return &Unifi{
 		BaseURL:    baseURL,
 		userName:   username,
 		password:   password,
@@ -46,7 +47,7 @@ func NewClient(username string, password string, site string) *Client {
 }
 
 //GetSiteHealth Calls /api/s/<site>/stat/health
-func (c *Client) GetSiteHealth(ctx context.Context) (*SiteHealth, error) {
+func (c *Unifi) GetSiteHealth(ctx context.Context) (*SiteHealth, error) {
 
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/s/%s/stat/health", c.BaseURL, c.site), nil)
 
@@ -67,7 +68,7 @@ func (c *Client) GetSiteHealth(ctx context.Context) (*SiteHealth, error) {
 }
 
 //GetDevices Calls /api/s/<site>/stat/device
-func (c *Client) getDevices(ctx context.Context) (*Devices, error) {
+func (c *Unifi) getDevices(ctx context.Context) (*Devices, error) {
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/s/%s/stat/device", c.BaseURL, c.site), nil)
 
 	if err != nil {
@@ -87,7 +88,7 @@ func (c *Client) getDevices(ctx context.Context) (*Devices, error) {
 }
 
 //GetSiteDevices - Returns a map of all the devices in a site
-func (c *Client) GetSiteDevices(ctx context.Context) (SiteDevices, error) {
+func (c *Unifi) GetSiteDevices(ctx context.Context) (SiteDevices, error) {
 	var siteDevices SiteDevices = SiteDevices{}
 
 	devices, err := c.getDevices(ctx)
@@ -103,8 +104,28 @@ func (c *Client) GetSiteDevices(ctx context.Context) (SiteDevices, error) {
 	return siteDevices, nil
 }
 
+//GetClients - Retrieves information about all active clients on the network
+func (c *Unifi) GetClients(ctx context.Context) (Clients, error) {
+	clients := Clients{}
+
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/s/%s/stat/sta", c.BaseURL, c.site), nil)
+
+	if err != nil {
+		return clients, err
+	}
+
+	req = req.WithContext(ctx)
+
+	if err := c.sendRequest(req, &clients); err != nil {
+		log.Println("ERROR: " + err.Error())
+		return clients, err
+	}
+
+	return clients, nil
+}
+
 // There must be a better way of doing this?
-func (c *Client) loginToken() (string, error) {
+func (c *Unifi) loginToken() (string, error) {
 
 	loginToken := ""
 
@@ -155,7 +176,7 @@ func (c *Client) loginToken() (string, error) {
 	return loginToken, nil
 }
 
-func (c *Client) sendRequest(req *http.Request, v interface{}) error {
+func (c *Unifi) sendRequest(req *http.Request, v interface{}) error {
 
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 	req.Header.Set("Accept", "application/json; charset=utf-8")
