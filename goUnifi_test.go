@@ -46,8 +46,8 @@ func TestDevices(t *testing.T) {
 
 	for _, device := range devices.Data {
 		//fmt.Println(string(device))
-		usg := new(USG)
-		if usg.unmarshal(device) {
+		usg := new(UGW3)
+		if usg.Unmarshal(device) {
 			fmt.Println("Found a USG with model: " + usg.Model)
 		}
 
@@ -65,12 +65,6 @@ func TestSiteDevices(t *testing.T) {
 		return
 	}
 
-	if siteDevices["USG"] != nil {
-		// This feels a bit wrong. We know this will always be an interface to a USG so it can be cast without error. But it would be nicer if siteDevices was a list
-		// of concrete objects of the correct type. Something like siteDevices.usg[0].Model. This can be done with a struct instead of a map, but then
-		// it will have a static set of arrays for each device type which is equally ugly.
-		
-		fmt.Println("Found a USG with Model: " + siteDevices["USG"][0].(USG).Model)
-	}
-
+	fmt.Println("SD TEST")
+	fmt.Println(siteDevices.UGW3)
 }

@@ -6,6 +6,14 @@ import (
 	"time"
 )
 
+// DeviceFactory - An experiment
+var deviceFactory = map[string]func() interface{}{
+	"UGW3":   func() interface{} { return UGW3{} },
+	"US8P60": func() interface{} { return US8P60{} },
+	"USC8":   func() interface{} { return USC8{} },
+	"U7LR":   func() interface{} { return U7LR{} },
+}
+
 //AuthResponse - Response back from an auth request. The data field is always empty.
 type AuthResponse struct {
 	Meta struct {
@@ -261,16 +269,33 @@ type Devices struct {
 	Data []json.RawMessage `json:"data"`
 }
 
-// TODO: Try and Find a more elegant way to do this
-
-//UbiquitiDevices - A static catalog of Ubquiti Devices that are known to this client
-var UbiquitiDevices = []string{"USG", "US8P60Switch", "U7LRWifiAP", "USC8Switch"}
-
 //SiteDevices is a container for all devices in a site. The key should alsays be one of the devices listed in the catalog above
-type SiteDevices map[string][]interface{}
+type mSiteDevices map[string][]interface{}
 
-//USG - Security Gateway
-type USG struct {
+// This is the cleanest way I have found so far of doing this. It ensures all devices are parsed out nicely but it requires this struct of ALL known
+// devices to work. However this does allow me to use this struct as a catalog of all known devices and ensures that when parsing out the JSON responses
+// they will unmarshal nicely into the correct type
+
+//SiteDevices contains arrays of devices found in the site. If no device of a pariticular type was found that field will be empty.
+type SiteDevices struct {
+	UGW3         []UGW3
+	US8P60       []US8P60
+	USC8         []USC8
+	U7LR         []U7LR
+	MODELUNKNOWN []interface{}
+}
+
+//Update sitedevices
+func (sd *SiteDevices) Update(model string, ) {
+	switch model {
+	case "UGW3":
+		device := UGW3{}
+		
+	}
+}
+
+//UGW3 - Security Gateway
+type UGW3 struct {
 	ID            string `json:"_id"`
 	IP            string `json:"ip"`
 	Mac           string `json:"mac"`
@@ -545,7 +570,7 @@ type USG struct {
 	XHasSSHHostkey bool  `json:"x_has_ssh_hostkey"`
 }
 
-func (u *USG) unmarshal(raw json.RawMessage) bool {
+func (u *UGW3) Unmarshal(raw json.RawMessage) bool {
 	dec := json.NewDecoder(bytes.NewReader(raw))
 
 	// This could cause issues down the road if new fields are added.
@@ -558,8 +583,8 @@ func (u *USG) unmarshal(raw json.RawMessage) bool {
 	return true
 }
 
-//US8P60Switch - 60W PoE 8 port switch
-type US8P60Switch struct {
+//US8P60 - 60W PoE 8 port switch
+type US8P60 struct {
 	ID            string `json:"_id"`
 	IP            string `json:"ip"`
 	Mac           string `json:"mac"`
@@ -760,7 +785,7 @@ type US8P60Switch struct {
 	XHasSSHHostkey   bool          `json:"x_has_ssh_hostkey"`
 }
 
-func (u *US8P60Switch) unmarshal(raw json.RawMessage) bool {
+func (u *US8P60) Unmarshal(raw json.RawMessage) bool {
 	dec := json.NewDecoder(bytes.NewReader(raw))
 
 	// This could cause issues down the road if new fields are added.
@@ -773,8 +798,8 @@ func (u *US8P60Switch) unmarshal(raw json.RawMessage) bool {
 	return true
 }
 
-//U7LRWifiAP - U7 Long Range Wifi AP
-type U7LRWifiAP struct {
+//U7LR - U7 Long Range Wifi AP
+type U7LR struct {
 	ID         string        `json:"_id"`
 	PortTable  []interface{} `json:"port_table"`
 	HasSpeaker bool          `json:"has_speaker"`
@@ -1263,7 +1288,7 @@ type U7LRWifiAP struct {
 	XHasSSHHostkey  bool          `json:"x_has_ssh_hostkey"`
 }
 
-func (u *U7LRWifiAP) unmarshal(raw json.RawMessage) bool {
+func (u *U7LR) Unmarshal(raw json.RawMessage) bool {
 	dec := json.NewDecoder(bytes.NewReader(raw))
 
 	// This could cause issues down the road if new fields are added.
@@ -1276,8 +1301,8 @@ func (u *U7LRWifiAP) unmarshal(raw json.RawMessage) bool {
 	return true
 }
 
-//USC8Switch - 8 Port PoE passthrough switch
-type USC8Switch struct {
+//USC8 - 8 Port PoE passthrough switch
+type USC8 struct {
 	ID            string `json:"_id"`
 	IP            string `json:"ip"`
 	Mac           string `json:"mac"`
@@ -1474,7 +1499,7 @@ type USC8Switch struct {
 	XHasSSHHostkey   bool        `json:"x_has_ssh_hostkey"`
 }
 
-func (u *USC8Switch) unmarshal(raw json.RawMessage) bool {
+func (u *USC8) unmarshal(raw json.RawMessage) bool {
 	dec := json.NewDecoder(bytes.NewReader(raw))
 
 	// This could cause issues down the road if new fields are added.

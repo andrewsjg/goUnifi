@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"net/http/cookiejar"
+	"reflect"
 	"strings"
 	"time"
 
@@ -88,25 +89,19 @@ func (c *Client) getDevices(ctx context.Context) (*Devices, error) {
 
 //GetSiteDevices - Returns a map of all the devices in a site
 func (c *Client) GetSiteDevices(ctx context.Context) (SiteDevices, error) {
+	var siteDevices SiteDevices = SiteDevices{}
+
 	devices, err := c.getDevices(ctx)
-	var siteDevices SiteDevices = make(SiteDevices)
 
 	if err != nil {
-		return nil, err
+		return siteDevices, err
 	}
 
-	for _, device := range devices.Data {
-
-		usg := USG{}
-		/*
-			USC8Switch := USC8Switch{}
-			U7LRWifiAP := U7LRWifiAP{}
-			US8P60Switch := US8P60Switch{}
-		*/
+	for _, deviceData := range devices.Data {
 
 		// Work out the model of the device
 		tmp := make(map[string]interface{})
-		err := json.Unmarshal(device, &tmp)
+		err := json.Unmarshal(deviceData, &tmp)
 
 		if err != nil {
 			fmt.Printf("Error parsing JSON string - %s", err)
@@ -119,14 +114,42 @@ func (c *Client) GetSiteDevices(ctx context.Context) (SiteDevices, error) {
 
 			if ok {
 				// Do something with Model.
+
 				fmt.Println("Device Model is: " + model)
 
+				device := deviceFactory[model]()
+				meth := reflect.ValueOf(device).MethodByName("Create")
+
+				d := meth.Call(nil)
+				dev := d[0].Interface()
+				json.Unmarshal(deviceData, &dev)
+
+				fmt.Println(reflect.TypeOf(dev))
+
+				//meth.Call(nil)
+				//fmt.Println(s)
+
+				/*
+
+					json.Unmarshal(deviceData, &device)
+
+					fmt.Println(device)
+					//reflect.ValueOf(deviceType).MethodByName("unmarshal").Call(params)
+					//deviceType.MethodByName("unmarshal").Call(params)
+					sd := reflect.ValueOf(&siteDevices)
+					deviceArray := reflect.Indirect(sd).FieldByName(model)
+
+					deviceArray = reflect.Append(deviceArray, reflect.ValueOf(device))
+					fmt.Println(device)
+					//deviceArray.Set(reflect.Append(deviceArray, reflect.ValueOf(device)))
+
+					s := sd.Elem()
+					f := s.FieldByName(model)
+					f.Set(deviceArray)
+				*/
 			}
 		}
 
-		if usg.unmarshal(device) {
-			siteDevices["USG"] = append(siteDevices["USG"], usg)
-		}
 	}
 
 	return siteDevices, nil
