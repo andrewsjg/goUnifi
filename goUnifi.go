@@ -104,9 +104,9 @@ func (c *Unifi) GetSiteDevices(ctx context.Context) (SiteDevices, error) {
 	return siteDevices, nil
 }
 
-//GetClients - Retrieves information about all active clients on the network
-func (c *Unifi) GetClients(ctx context.Context) (Clients, error) {
-	clients := Clients{}
+//GetActiveClients - Retrieves information about all active clients on the network
+func (c *Unifi) GetActiveClients(ctx context.Context) (ActiveClients, error) {
+	clients := ActiveClients{}
 
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/s/%s/stat/sta", c.BaseURL, c.site), nil)
 
@@ -122,6 +122,86 @@ func (c *Unifi) GetClients(ctx context.Context) (Clients, error) {
 	}
 
 	return clients, nil
+}
+
+//GetKnownClients - Retrieves information about all known clients seen on the network
+func (c *Unifi) GetKnownClients(ctx context.Context) (KnownClients, error) {
+	knownClients := KnownClients{}
+
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/s/%s/rest/user", c.BaseURL, c.site), nil)
+
+	if err != nil {
+		return knownClients, err
+	}
+
+	req = req.WithContext(ctx)
+
+	if err := c.sendRequest(req, &knownClients); err != nil {
+		log.Println("ERROR: " + err.Error())
+		return knownClients, err
+	}
+
+	return knownClients, nil
+}
+
+//GetSiteSettings - Retrieves Detailed Site Settings
+func (c *Unifi) GetSiteSettings(ctx context.Context) (SiteSettings, error) {
+	siteSettings := SiteSettings{}
+
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/s/%s/rest/setting", c.BaseURL, c.site), nil)
+
+	if err != nil {
+		return siteSettings, err
+	}
+
+	req = req.WithContext(ctx)
+
+	if err := c.sendRequest(req, &siteSettings); err != nil {
+		log.Println("ERROR: " + err.Error())
+		return siteSettings, err
+	}
+
+	return siteSettings, nil
+}
+
+//GetRoutes - Retrieves Routing Details
+func (c *Unifi) GetRoutes(ctx context.Context) (Routing, error) {
+	routing := Routing{}
+
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/s/%s/stat/routing", c.BaseURL, c.site), nil)
+
+	if err != nil {
+		return routing, err
+	}
+
+	req = req.WithContext(ctx)
+
+	if err := c.sendRequest(req, &routing); err != nil {
+		log.Println("ERROR: " + err.Error())
+		return routing, err
+	}
+
+	return routing, nil
+}
+
+//GetFirewallRules - Retrieves user defined firewall rules
+func (c *Unifi) GetFirewallRules(ctx context.Context) (FirewallRules, error) {
+	firewallRules := FirewallRules{}
+
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/s/%s/rest/firewallrule", c.BaseURL, c.site), nil)
+
+	if err != nil {
+		return firewallRules, err
+	}
+
+	req = req.WithContext(ctx)
+
+	if err := c.sendRequest(req, &firewallRules); err != nil {
+		log.Println("ERROR: " + err.Error())
+		return firewallRules, err
+	}
+
+	return firewallRules, nil
 }
 
 // There must be a better way of doing this?

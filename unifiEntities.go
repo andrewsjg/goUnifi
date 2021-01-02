@@ -109,7 +109,7 @@ type ActiveClients struct {
 	Meta struct {
 		Rc string `json:"rc"`
 	} `json:"meta"`
-	Data []struct {
+	Clients []struct {
 		SiteID              string `json:"site_id"`
 		AssocTime           int    `json:"assoc_time"`
 		LatestAssocTime     int    `json:"latest_assoc_time"`
@@ -195,12 +195,12 @@ type ActiveClients struct {
 	} `json:"data"`
 }
 
-// User - List of all configured/known clients on the site
-type User struct {
+// KnownClients - List of all configured/known clients on the site
+type KnownClients struct {
 	Meta struct {
 		Rc string `json:"rc"`
 	} `json:"meta"`
-	Data []struct {
+	Clients []struct {
 		ID                  string `json:"_id"`
 		Mac                 string `json:"mac"`
 		SiteID              string `json:"site_id"`
@@ -223,93 +223,221 @@ type User struct {
 	} `json:"data"`
 }
 
-// Clients - A list of active clients on the network
-type Clients struct {
+//SiteSettings - Detailed site settings
+type SiteSettings struct {
 	Meta struct {
 		Rc string `json:"rc"`
 	} `json:"meta"`
 	Data []struct {
-		SiteID              string `json:"site_id"`
-		AssocTime           int    `json:"assoc_time"`
-		LatestAssocTime     int    `json:"latest_assoc_time"`
-		Oui                 string `json:"oui"`
-		UserID              string `json:"user_id"`
-		ID                  string `json:"_id"`
-		Mac                 string `json:"mac"`
-		IsGuest             bool   `json:"is_guest"`
-		FirstSeen           int    `json:"first_seen"`
-		LastSeen            int    `json:"last_seen"`
-		IsWired             bool   `json:"is_wired"`
-		Hostname            string `json:"hostname,omitempty"`
-		UsergroupID         string `json:"usergroup_id,omitempty"`
-		Name                string `json:"name,omitempty"`
-		Noted               bool   `json:"noted,omitempty"`
-		FingerprintOverride bool   `json:"fingerprint_override,omitempty"`
-		DevIDOverride       int    `json:"dev_id_override,omitempty"`
-		Blocked             bool   `json:"blocked,omitempty"`
-		UptimeByUap         int    `json:"_uptime_by_uap,omitempty"`
-		LastSeenByUap       int    `json:"_last_seen_by_uap,omitempty"`
-		IsGuestByUap        bool   `json:"_is_guest_by_uap,omitempty"`
-		ApMac               string `json:"ap_mac,omitempty"`
-		Channel             int    `json:"channel,omitempty"`
-		Radio               string `json:"radio,omitempty"`
-		RadioName           string `json:"radio_name,omitempty"`
-		Essid               string `json:"essid,omitempty"`
-		Bssid               string `json:"bssid,omitempty"`
-		PowersaveEnabled    bool   `json:"powersave_enabled,omitempty"`
-		Is11R               bool   `json:"is_11r,omitempty"`
-		Ccq                 int    `json:"ccq,omitempty"`
-		Rssi                int    `json:"rssi,omitempty"`
-		Noise               int    `json:"noise,omitempty"`
-		Signal              int    `json:"signal,omitempty"`
-		TxRate              int    `json:"tx_rate,omitempty"`
-		RxRate              int    `json:"rx_rate,omitempty"`
-		TxPower             int    `json:"tx_power,omitempty"`
-		Idletime            int    `json:"idletime,omitempty"`
-		IP                  string `json:"ip"`
-		DhcpendTime         int    `json:"dhcpend_time,omitempty"`
-		Satisfaction        int    `json:"satisfaction,omitempty"`
-		Anomalies           int    `json:"anomalies,omitempty"`
-		Vlan                int    `json:"vlan,omitempty"`
-		RadioProto          string `json:"radio_proto,omitempty"`
-		Uptime              int    `json:"uptime"`
-		TxBytes             int    `json:"tx_bytes"`
-		RxBytes             int    `json:"rx_bytes"`
-		TxPackets           int    `json:"tx_packets"`
-		TxRetries           int    `json:"tx_retries"`
-		WifiTxAttempts      int    `json:"wifi_tx_attempts"`
-		RxPackets           int    `json:"rx_packets"`
-		BytesR              int    `json:"bytes-r"`
-		TxBytesR            int    `json:"tx_bytes-r"`
-		RxBytesR            int    `json:"rx_bytes-r"`
-		Authorized          bool   `json:"authorized"`
-		QosPolicyApplied    bool   `json:"qos_policy_applied"`
-		UptimeByUsw         int    `json:"_uptime_by_usw,omitempty"`
-		LastSeenByUsw       int    `json:"_last_seen_by_usw,omitempty"`
-		IsGuestByUsw        bool   `json:"_is_guest_by_usw,omitempty"`
-		SwMac               string `json:"sw_mac,omitempty"`
-		SwDepth             int    `json:"sw_depth,omitempty"`
-		SwPort              int    `json:"sw_port,omitempty"`
-		Network             string `json:"network"`
-		NetworkID           string `json:"network_id"`
-		UptimeByUgw         int    `json:"_uptime_by_ugw"`
-		LastSeenByUgw       int    `json:"_last_seen_by_ugw"`
-		IsGuestByUgw        bool   `json:"_is_guest_by_ugw"`
-		GwMac               string `json:"gw_mac"`
-		WiredTxBytes        int    `json:"wired-tx_bytes,omitempty"`
-		WiredRxBytes        int    `json:"wired-rx_bytes,omitempty"`
-		WiredTxPackets      int    `json:"wired-tx_packets,omitempty"`
-		WiredRxPackets      int    `json:"wired-rx_packets,omitempty"`
-		WiredTxBytesR       int    `json:"wired-tx_bytes-r,omitempty"`
-		WiredRxBytesR       int    `json:"wired-rx_bytes-r,omitempty"`
-		UseFixedip          bool   `json:"use_fixedip,omitempty"`
-		FixedIP             string `json:"fixed_ip,omitempty"`
-		DevCat              int    `json:"dev_cat,omitempty"`
-		DevFamily           int    `json:"dev_family,omitempty"`
-		DevID               int    `json:"dev_id,omitempty"`
-		OsClass             int    `json:"os_class,omitempty"`
-		OsName              int    `json:"os_name,omitempty"`
-		DevVendor           int    `json:"dev_vendor,omitempty"`
-		Note                string `json:"note,omitempty"`
+		ID                                       string        `json:"_id"`
+		Key                                      string        `json:"key"`
+		Name                                     string        `json:"name,omitempty"`
+		Hostname                                 string        `json:"hostname,omitempty"`
+		Port                                     interface{}   `json:"port,omitempty"`
+		FingerbankKey                            string        `json:"fingerbank_key,omitempty"`
+		Discoverable                             bool          `json:"discoverable,omitempty"`
+		DataRetentionTimeEnabled                 bool          `json:"data_retention_time_enabled,omitempty"`
+		DataRetentionTimeInHoursFor5MinutesScale int           `json:"data_retention_time_in_hours_for_5minutes_scale,omitempty"`
+		DataRetentionTimeInHoursForHourlyScale   int           `json:"data_retention_time_in_hours_for_hourly_scale,omitempty"`
+		DataRetentionTimeInHoursForDailyScale    int           `json:"data_retention_time_in_hours_for_daily_scale,omitempty"`
+		DataRetentionTimeInHoursForMonthlyScale  int           `json:"data_retention_time_in_hours_for_monthly_scale,omitempty"`
+		DataRetentionTimeInHoursForOthers        int           `json:"data_retention_time_in_hours_for_others,omitempty"`
+		TimeSeriesPerClientStatsEnabled          bool          `json:"time_series_per_client_stats_enabled,omitempty"`
+		AutobackupTimezone                       string        `json:"autobackup_timezone,omitempty"`
+		AutobackupEnabled                        bool          `json:"autobackup_enabled,omitempty"`
+		AutobackupDays                           int           `json:"autobackup_days,omitempty"`
+		AutobackupCronExpr                       string        `json:"autobackup_cron_expr,omitempty"`
+		StoreEnabled                             string        `json:"store_enabled,omitempty"`
+		LiveChat                                 string        `json:"live_chat,omitempty"`
+		AutobackupMaxFiles                       int           `json:"autobackup_max_files,omitempty"`
+		MinimumUsableHdSpace                     int           `json:"minimum_usable_hd_space,omitempty"`
+		LiveUpdates                              string        `json:"live_updates,omitempty"`
+		EnableAnalytics                          bool          `json:"enable_analytics,omitempty"`
+		AnalyticsDisapprovedFor                  string        `json:"analytics_disapproved_for,omitempty"`
+		BackupToCloudEnabled                     bool          `json:"backup_to_cloud_enabled,omitempty"`
+		OverrideInformHost                       bool          `json:"override_inform_host,omitempty"`
+		SiteID                                   string        `json:"site_id,omitempty"`
+		Ugw3Wan2Enabled                          bool          `json:"ugw3_wan2_enabled,omitempty"`
+		Interval                                 int           `json:"interval,omitempty"`
+		Enabled                                  bool          `json:"enabled,omitempty"`
+		DhcpSnoop                                bool          `json:"dhcp_snoop,omitempty"`
+		Community                                string        `json:"community,omitempty"`
+		NtpServer1                               string        `json:"ntp_server_1,omitempty"`
+		NtpServer2                               string        `json:"ntp_server_2,omitempty"`
+		NtpServer3                               string        `json:"ntp_server_3,omitempty"`
+		NtpServer4                               string        `json:"ntp_server_4,omitempty"`
+		Code                                     string        `json:"code,omitempty"`
+		FingerprintingEnabled                    bool          `json:"fingerprintingEnabled,omitempty"`
+		Timezone                                 string        `json:"timezone,omitempty"`
+		AdvancedFeatureEnabled                   bool          `json:"advanced_feature_enabled,omitempty"`
+		UnifiIdpEnabled                          bool          `json:"unifi_idp_enabled,omitempty"`
+		XMgmtKey                                 string        `json:"x_mgmt_key,omitempty"`
+		XSSHAuthPasswordEnabled                  bool          `json:"x_ssh_auth_password_enabled,omitempty"`
+		XSSHBindWildcard                         bool          `json:"x_ssh_bind_wildcard,omitempty"`
+		XSSHEnabled                              bool          `json:"x_ssh_enabled,omitempty"`
+		XSSHPassword                             string        `json:"x_ssh_password,omitempty"`
+		XSSHUsername                             string        `json:"x_ssh_username,omitempty"`
+		XSSHSha512Passwd                         string        `json:"x_ssh_sha512passwd,omitempty"`
+		LedEnabled                               bool          `json:"led_enabled,omitempty"`
+		AlertEnabled                             bool          `json:"alert_enabled,omitempty"`
+		XSSHKeys                                 []interface{} `json:"x_ssh_keys,omitempty"`
+		AutoUpgrade                              bool          `json:"auto_upgrade,omitempty"`
+		UplinkType                               string        `json:"uplink_type,omitempty"`
+		XMeshEssid                               string        `json:"x_mesh_essid,omitempty"`
+		XMeshPsk                                 string        `json:"x_mesh_psk,omitempty"`
+		IP                                       string        `json:"ip,omitempty"`
+		Debug                                    bool          `json:"debug,omitempty"`
+		ThisController                           bool          `json:"this_controller,omitempty"`
+		ThisControllerEncryptedOnly              bool          `json:"this_controller_encrypted_only,omitempty"`
+		NetconsoleEnabled                        bool          `json:"netconsole_enabled,omitempty"`
+		NetconsoleHost                           string        `json:"netconsole_host,omitempty"`
+		NetconsolePort                           string        `json:"netconsole_port,omitempty"`
+		AuthPort                                 int           `json:"auth_port,omitempty"`
+		AcctPort                                 int           `json:"acct_port,omitempty"`
+		InterimUpdateInterval                    int           `json:"interim_update_interval,omitempty"`
+		ConfigureWholeNetwork                    bool          `json:"configure_whole_network,omitempty"`
+		TunneledReply                            bool          `json:"tunneled_reply,omitempty"`
+		XSecret                                  string        `json:"x_secret,omitempty"`
+		Download                                 int           `json:"download,omitempty"`
+		Upload                                   int           `json:"upload,omitempty"`
+		Brightness                               int           `json:"brightness,omitempty"`
+		IdleTimeout                              int           `json:"idle_timeout,omitempty"`
+		Sync                                     bool          `json:"sync,omitempty"`
+		TouchEvent                               bool          `json:"touch_event,omitempty"`
+		Auth                                     string        `json:"auth,omitempty"`
+		RedirectHTTPS                            bool          `json:"redirect_https,omitempty"`
+		RestrictedSubnet1                        string        `json:"restricted_subnet_1,omitempty"`
+		RestrictedSubnet2                        string        `json:"restricted_subnet_2,omitempty"`
+		RestrictedSubnet3                        string        `json:"restricted_subnet_3,omitempty"`
+		PortalCustomizedLogoEnabled              bool          `json:"portal_customized_logo_enabled,omitempty"`
+		PortalCustomizedTextColor                string        `json:"portal_customized_text_color,omitempty"`
+		PortalCustomizedTitle                    string        `json:"portal_customized_title,omitempty"`
+		PortalCustomizedButtonColor              string        `json:"portal_customized_button_color,omitempty"`
+		PortalEnabled                            bool          `json:"portal_enabled,omitempty"`
+		PortalCustomizedLanguages                []string      `json:"portal_customized_languages,omitempty"`
+		PortalCustomizedBgImageTile              bool          `json:"portal_customized_bg_image_tile,omitempty"`
+		PortalCustomizedButtonTextColor          string        `json:"portal_customized_button_text_color,omitempty"`
+		PortalCustomizedBgImageEnabled           bool          `json:"portal_customized_bg_image_enabled,omitempty"`
+		PortalCustomizedBoxLinkColor             string        `json:"portal_customized_box_link_color,omitempty"`
+		PortalCustomizedLinkColor                string        `json:"portal_customized_link_color,omitempty"`
+		XPassword                                string        `json:"x_password,omitempty"`
+		RedirectEnabled                          bool          `json:"redirect_enabled,omitempty"`
+		PortalCustomizedBgColor                  string        `json:"portal_customized_bg_color,omitempty"`
+		VoucherEnabled                           bool          `json:"voucher_enabled,omitempty"`
+		PortalCustomizedBoxOpacity               int           `json:"portal_customized_box_opacity,omitempty"`
+		FacebookWifiGwName                       string        `json:"facebook_wifi_gw_name,omitempty"`
+		Expire                                   int           `json:"expire,omitempty"`
+		PortalCustomizedBoxTextColor             string        `json:"portal_customized_box_text_color,omitempty"`
+		TemplateEngine                           string        `json:"template_engine,omitempty"`
+		PortalCustomizedBoxColor                 string        `json:"portal_customized_box_color,omitempty"`
+		RedirectURL                              string        `json:"redirect_url,omitempty"`
+		RadiusAuthType                           string        `json:"radius_auth_type,omitempty"`
+		RestrictedSubnet4                        string        `json:"restricted_subnet_4,omitempty"`
+		PortalCustomizedTos                      string        `json:"portal_customized_tos,omitempty"`
+		PortalCustomizedWelcomeText              string        `json:"portal_customized_welcome_text,omitempty"`
+		Default                                  bool          `json:"default,omitempty"`
+		ChannelsNg                               []string      `json:"channels_ng,omitempty"`
+		CronExpr                                 string        `json:"cron_expr,omitempty"`
+		ExcludeDevices                           []interface{} `json:"exclude_devices,omitempty"`
+		HtModesNa                                []string      `json:"ht_modes_na,omitempty"`
+		HtModesNg                                []string      `json:"ht_modes_ng,omitempty"`
+		Radios                                   []string      `json:"radios,omitempty"`
+		Optimize                                 []string      `json:"optimize,omitempty"`
+		ChannelsNa                               []string      `json:"channels_na,omitempty"`
+		FtpModule                                bool          `json:"ftp_module,omitempty"`
+		GreModule                                bool          `json:"gre_module,omitempty"`
+		H323Module                               bool          `json:"h323_module,omitempty"`
+		PptpModule                               bool          `json:"pptp_module,omitempty"`
+		SipModule                                bool          `json:"sip_module,omitempty"`
+		TftpModule                               bool          `json:"tftp_module,omitempty"`
+		BroadcastPing                            bool          `json:"broadcast_ping,omitempty"`
+		ReceiveRedirects                         bool          `json:"receive_redirects,omitempty"`
+		SendRedirects                            bool          `json:"send_redirects,omitempty"`
+		SynCookies                               bool          `json:"syn_cookies,omitempty"`
+		OffloadAccounting                        bool          `json:"offload_accounting,omitempty"`
+		OffloadSch                               bool          `json:"offload_sch,omitempty"`
+		OffloadL2Blocking                        bool          `json:"offload_l2_blocking,omitempty"`
+		MdnsEnabled                              bool          `json:"mdns_enabled,omitempty"`
+		UpnpEnabled                              bool          `json:"upnp_enabled,omitempty"`
+		UpnpNatPmpEnabled                        bool          `json:"upnp_nat_pmp_enabled,omitempty"`
+		UpnpSecureMode                           bool          `json:"upnp_secure_mode,omitempty"`
+		MssClamp                                 string        `json:"mss_clamp,omitempty"`
+		DhcpdHostfileUpdate                      bool          `json:"dhcpd_hostfile_update,omitempty"`
+		DhcpdUseDnsmasq                          bool          `json:"dhcpd_use_dnsmasq,omitempty"`
+		GeoIPFilteringEnabled                    bool          `json:"geo_ip_filtering_enabled,omitempty"`
+		GeoIPFilteringBlock                      string        `json:"geo_ip_filtering_block,omitempty"`
+		GeoIPFilteringCountries                  string        `json:"geo_ip_filtering_countries,omitempty"`
+		GeoIPFilteringTrafficDirection           string        `json:"geo_ip_filtering_traffic_direction,omitempty"`
+		IcmpTimeout                              int           `json:"icmp_timeout,omitempty"`
+		OtherTimeout                             int           `json:"other_timeout,omitempty"`
+		TCPCloseTimeout                          int           `json:"tcp_close_timeout,omitempty"`
+		TCPCloseWaitTimeout                      int           `json:"tcp_close_wait_timeout,omitempty"`
+		TCPEstablishedTimeout                    int           `json:"tcp_established_timeout,omitempty"`
+		TCPFinWaitTimeout                        int           `json:"tcp_fin_wait_timeout,omitempty"`
+		TCPLastAckTimeout                        int           `json:"tcp_last_ack_timeout,omitempty"`
+		TCPSynRecvTimeout                        int           `json:"tcp_syn_recv_timeout,omitempty"`
+		TCPSynSentTimeout                        int           `json:"tcp_syn_sent_timeout,omitempty"`
+		TCPTimeWaitTimeout                       int           `json:"tcp_time_wait_timeout,omitempty"`
+		UDPOtherTimeout                          int           `json:"udp_other_timeout,omitempty"`
+		UDPStreamTimeout                         int           `json:"udp_stream_timeout,omitempty"`
+		FirewallWanDefaultLog                    bool          `json:"firewall_wan_default_log,omitempty"`
+		FirewallLanDefaultLog                    bool          `json:"firewall_lan_default_log,omitempty"`
+		FirewallGuestDefaultLog                  bool          `json:"firewall_guest_default_log,omitempty"`
+		UpnpWanInterface                         string        `json:"upnp_wan_interface,omitempty"`
+		DhcpRelayHopCount                        int           `json:"dhcp_relay_hop_count,omitempty"`
+		DhcpRelayMaxSize                         int           `json:"dhcp_relay_max_size,omitempty"`
+		DhcpRelayPort                            int           `json:"dhcp_relay_port,omitempty"`
+		DhcpRelayAgentsPackets                   string        `json:"dhcp_relay_agents_packets,omitempty"`
+	} `json:"data"`
+}
+
+//Routing - Data about configured routes
+type Routing struct {
+	Meta struct {
+		Rc string `json:"rc"`
+	} `json:"meta"`
+	Data []struct {
+		Nh []struct {
+			Intf   string `json:"intf"`
+			Metric string `json:"metric"`
+			T      string `json:"t"`
+			Via    string `json:"via"`
+		} `json:"nh"`
+		Pfx string `json:"pfx"`
+	} `json:"data"`
+}
+
+//FirewallRules - User defined firewall rules
+type FirewallRules struct {
+	Meta struct {
+		Rc string `json:"rc"`
+	} `json:"meta"`
+	Data []struct {
+		ID                    string        `json:"_id"`
+		Ruleset               string        `json:"ruleset"`
+		RuleIndex             int           `json:"rule_index"`
+		Name                  string        `json:"name"`
+		Enabled               bool          `json:"enabled"`
+		Action                string        `json:"action"`
+		ProtocolMatchExcepted bool          `json:"protocol_match_excepted"`
+		Logging               bool          `json:"logging"`
+		StateNew              bool          `json:"state_new"`
+		StateEstablished      bool          `json:"state_established"`
+		StateInvalid          bool          `json:"state_invalid"`
+		StateRelated          bool          `json:"state_related"`
+		Ipsec                 string        `json:"ipsec"`
+		SrcFirewallgroupIds   []interface{} `json:"src_firewallgroup_ids"`
+		SrcMacAddress         string        `json:"src_mac_address"`
+		DstFirewallgroupIds   []interface{} `json:"dst_firewallgroup_ids"`
+		DstAddress            string        `json:"dst_address"`
+		SrcAddress            string        `json:"src_address"`
+		Protocol              string        `json:"protocol"`
+		IcmpTypename          string        `json:"icmp_typename"`
+		SrcNetworkconfID      string        `json:"src_networkconf_id"`
+		SrcNetworkconfType    string        `json:"src_networkconf_type"`
+		DstNetworkconfID      string        `json:"dst_networkconf_id"`
+		DstNetworkconfType    string        `json:"dst_networkconf_type"`
+		SiteID                string        `json:"site_id"`
+		DstPort               string        `json:"dst_port,omitempty"`
 	} `json:"data"`
 }
