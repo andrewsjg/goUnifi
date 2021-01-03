@@ -264,6 +264,66 @@ func (c *Unifi) GetRogueAPs(ctx context.Context) (RogueAPs, error) {
 	return rogueAPs, nil
 }
 
+//GetPortProfiles - Retrieves a list of configured port profiles
+func (c *Unifi) GetPortProfiles(ctx context.Context) (PortProfiles, error) {
+	portProfiles := PortProfiles{}
+
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/s/%s/rest/portconf", c.BaseURL, c.site), nil)
+
+	if err != nil {
+		return portProfiles, err
+	}
+
+	req = req.WithContext(ctx)
+
+	if err := c.sendRequest(req, &portProfiles); err != nil {
+		log.Println("ERROR: " + err.Error())
+		return portProfiles, err
+	}
+
+	return portProfiles, nil
+}
+
+//GetRadiusProfiles - Retrieves a list of configured port profiles
+func (c *Unifi) GetRadiusProfiles(ctx context.Context) (RadiusProfiles, error) {
+	radiusProfiles := RadiusProfiles{}
+
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/s/%s/rest/radiusprofile", c.BaseURL, c.site), nil)
+
+	if err != nil {
+		return radiusProfiles, err
+	}
+
+	req = req.WithContext(ctx)
+
+	if err := c.sendRequest(req, &radiusProfiles); err != nil {
+		log.Println("ERROR: " + err.Error())
+		return radiusProfiles, err
+	}
+
+	return radiusProfiles, nil
+}
+
+//GetRadiusAccounts - Retrieves a list of configured port profiles
+func (c *Unifi) GetRadiusAccounts(ctx context.Context) (RadiusAccounts, error) {
+	radiusAccounts := RadiusAccounts{}
+
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/s/%s/rest/account", c.BaseURL, c.site), nil)
+
+	if err != nil {
+		return radiusAccounts, err
+	}
+
+	req = req.WithContext(ctx)
+
+	if err := c.sendRequest(req, &radiusAccounts); err != nil {
+		log.Println("ERROR: " + err.Error())
+		return radiusAccounts, err
+	}
+
+	return radiusAccounts, nil
+}
+
 // There must be a better way of doing this?
 func (c *Unifi) loginToken() (string, error) {
 

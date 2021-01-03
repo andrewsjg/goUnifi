@@ -546,3 +546,59 @@ type RogueAPs struct {
 		Oui        string `json:"oui"`
 	} `json:"data"`
 }
+
+//PortProfiles - Configured port profiles
+type PortProfiles struct {
+	Meta struct {
+		Rc string `json:"rc"`
+	} `json:"meta"`
+	Data []struct {
+		ID                  string `json:"_id"`
+		SiteID              string `json:"site_id"`
+		Name                string `json:"name"`
+		Forward             string `json:"forward"`
+		AttrHiddenID        string `json:"attr_hidden_id,omitempty"`
+		AttrHidden          bool   `json:"attr_hidden,omitempty"`
+		AttrNoDelete        bool   `json:"attr_no_delete,omitempty"`
+		AttrNoEdit          bool   `json:"attr_no_edit"`
+		NativeNetworkconfID string `json:"native_networkconf_id,omitempty"`
+		Isolation           bool   `json:"isolation,omitempty"`
+	} `json:"data"`
+}
+
+//RadiusProfiles - Configured Radius Profiles
+type RadiusProfiles struct {
+	Meta struct {
+		Rc string `json:"rc"`
+	} `json:"meta"`
+	Data []struct {
+		ID          string `json:"_id"`
+		AuthServers []struct {
+			IP      string `json:"ip"`
+			Port    int    `json:"port"`
+			XSecret string `json:"x_secret"`
+		} `json:"auth_servers"`
+		Name             string        `json:"name"`
+		SiteID           string        `json:"site_id"`
+		AcctServers      []interface{} `json:"acct_servers"`
+		AttrNoDelete     bool          `json:"attr_no_delete"`
+		AttrHiddenID     string        `json:"attr_hidden_id"`
+		UseUsgAuthServer bool          `json:"use_usg_auth_server"`
+	} `json:"data"`
+}
+
+//RadiusAccounts - Retrieve the details of Radius accounts
+type RadiusAccounts struct {
+	Meta struct {
+		Rc string `json:"rc"`
+	} `json:"meta"`
+	Data []struct {
+		ID               string `json:"_id"`
+		Name             string `json:"name"`
+		XPassword        string `json:"x_password"`
+		TunnelType       int    `json:"tunnel_type"`
+		TunnelMediumType int    `json:"tunnel_medium_type"`
+		Vlan             string `json:"vlan"`
+		SiteID           string `json:"site_id"`
+	} `json:"data"`
+}

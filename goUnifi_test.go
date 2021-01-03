@@ -177,3 +177,54 @@ func TestRogueAPs(t *testing.T) {
 
 	fmt.Printf("%d Foriegn WIFI Networks Seen\n", len(rogueAPs.Data))
 }
+
+func TestPortProfiles(t *testing.T) {
+	unifi := createClient()
+	ctx := context.Background()
+
+	portProfiles, err := unifi.GetPortProfiles(ctx)
+
+	if err != nil {
+		t.Errorf("PortProfiles returned an error: %s", err)
+		return
+	}
+
+	fmt.Println("Port Profiles:")
+	for _, portProfile := range portProfiles.Data {
+		fmt.Println(portProfile.Name)
+	}
+}
+
+func TestRadiusProfiles(t *testing.T) {
+	unifi := createClient()
+	ctx := context.Background()
+
+	radiusProfiles, err := unifi.GetRadiusProfiles(ctx)
+
+	if err != nil {
+		t.Errorf("RadiusProfiles returned an error: %s", err)
+		return
+	}
+
+	fmt.Println("Radius Profiles:")
+	for _, radiusProfile := range radiusProfiles.Data {
+		fmt.Println(radiusProfile.Name)
+	}
+}
+
+func TestRadiusAccounts(t *testing.T) {
+	unifi := createClient()
+	ctx := context.Background()
+
+	radiusAccounts, err := unifi.GetRadiusAccounts(ctx)
+
+	if err != nil {
+		t.Errorf("RadiusAccounts returned an error: %s", err)
+		return
+	}
+
+	fmt.Println("Radius Accounts:")
+	for _, radiusAccount := range radiusAccounts.Data {
+		fmt.Println(radiusAccount.Name)
+	}
+}
