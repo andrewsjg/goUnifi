@@ -441,3 +441,17 @@ type FirewallRules struct {
 		DstPort               string        `json:"dst_port,omitempty"`
 	} `json:"data"`
 }
+
+//FirewallGroups - Information about firewall groups
+type FirewallGroups struct {
+	Meta struct {
+		Rc string `json:"rc"`
+	} `json:"meta"`
+	Data []struct {
+		ID           string   `json:"_id"`
+		Name         string   `json:"name"`
+		GroupType    string   `json:"group_type"`
+		GroupMembers []string `json:"group_members"`
+		SiteID       string   `json:"site_id"`
+	} `json:"data"`
+}

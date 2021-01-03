@@ -129,3 +129,20 @@ func TestGetFirewallRules(t *testing.T) {
 		fmt.Println(fwRule.Name)
 	}
 }
+
+func TestGetFirewallGroups(t *testing.T) {
+	unifi := createClient()
+	ctx := context.Background()
+
+	firewallGroups, err := unifi.GetFirewallGroups(ctx)
+
+	if err != nil {
+		t.Errorf("FirewallRules returned an error: %s", err)
+		return
+	}
+
+	fmt.Println("User Defined Firewall Groups for:")
+	for _, fwRule := range firewallGroups.Data {
+		fmt.Println(fwRule.Name)
+	}
+}

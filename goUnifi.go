@@ -204,6 +204,26 @@ func (c *Unifi) GetFirewallRules(ctx context.Context) (FirewallRules, error) {
 	return firewallRules, nil
 }
 
+//GetFirewallGroups - Retrieves user defined firewall groups
+func (c *Unifi) GetFirewallGroups(ctx context.Context) (FirewallGroups, error) {
+	firewallGroups := FirewallGroups{}
+
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/s/%s/rest/firewallgroup", c.BaseURL, c.site), nil)
+
+	if err != nil {
+		return firewallGroups, err
+	}
+
+	req = req.WithContext(ctx)
+
+	if err := c.sendRequest(req, &firewallGroups); err != nil {
+		log.Println("ERROR: " + err.Error())
+		return firewallGroups, err
+	}
+
+	return firewallGroups, nil
+}
+
 // There must be a better way of doing this?
 func (c *Unifi) loginToken() (string, error) {
 
