@@ -658,3 +658,81 @@ type CountryCodes struct {
 		Key  string `json:"key"`
 	} `json:"data"`
 }
+
+//LoggedInUser - User currently loggedin
+type LoggedInUser struct {
+	Meta struct {
+		Rc string `json:"rc"`
+	} `json:"meta"`
+	Data []struct {
+		Name                      string        `json:"name"`
+		Email                     string        `json:"email"`
+		SiteID                    string        `json:"site_id"`
+		SiteName                  string        `json:"site_name"`
+		SiteRole                  string        `json:"site_role"`
+		SitePermissions           []interface{} `json:"site_permissions"`
+		SuperSitePermissions      []interface{} `json:"super_site_permissions"`
+		LastSiteID                string        `json:"last_site_id"`
+		RequiresNewPassword       bool          `json:"requires_new_password"`
+		IsSuper                   bool          `json:"is_super"`
+		DeviceID                  string        `json:"device_id"`
+		AdminID                   string        `json:"admin_id"`
+		EmailAlertEnabled         bool          `json:"email_alert_enabled"`
+		EmailAlertGroupingEnabled bool          `json:"email_alert_grouping_enabled"`
+		EmailAlertGroupingDelay   int           `json:"email_alert_grouping_delay"`
+		PushAlertEnabled          bool          `json:"push_alert_enabled"`
+		IsProfessionalInstaller   bool          `json:"is_professional_installer"`
+		HTMLEmailEnabled          bool          `json:"html_email_enabled"`
+		UISettings                struct {
+			NeverCheckForUpdate   bool   `json:"neverCheckForUpdate"`
+			StatisticsPrefferedTZ string `json:"statisticsPrefferedTZ"`
+			StatisticsPreferBps   bool   `json:"statisticsPreferBps"`
+			DeviceStatusList      []struct {
+				ID   string `json:"id"`
+				Type string `json:"type"`
+			} `json:"deviceStatusList"`
+			DashboardConfig struct {
+				LastActiveDashboardID string `json:"lastActiveDashboardId"`
+				Dashboards            struct {
+					FiveD1694851A9Cf2195F548752 struct {
+						Order int `json:"order"`
+					} `json:"5d1694851a9cf2195f548752"`
+					FiveF12D85Ae358B452Cd0Eb762 struct {
+					} `json:"5f12d85ae358b452cd0eb762"`
+				} `json:"dashboards"`
+			} `json:"dashboardConfig"`
+			Preferences struct {
+				AlertsPosition                  string `json:"alertsPosition"`
+				AllowHiddenDashboardModules     bool   `json:"allowHiddenDashboardModules"`
+				BrowserLogLevel                 string `json:"browserLogLevel"`
+				BypassAutoFindDevices           bool   `json:"bypassAutoFindDevices"`
+				BypassConfirmAdoptAndUpgrade    bool   `json:"bypassConfirmAdoptAndUpgrade"`
+				BypassConfirmBlock              bool   `json:"bypassConfirmBlock"`
+				BypassConfirmRestart            bool   `json:"bypassConfirmRestart"`
+				BypassConfirmUpgrade            bool   `json:"bypassConfirmUpgrade"`
+				DateFormat                      string `json:"dateFormat"`
+				EnableNewSettings               bool   `json:"enableNewSettings"`
+				IsAppDark                       bool   `json:"isAppDark"`
+				IsPropertyPanelFixed            bool   `json:"isPropertyPanelFixed"`
+				IsRegularGraphForAirViewEnabled bool   `json:"isRegularGraphForAirViewEnabled"`
+				IsResponsive                    bool   `json:"isResponsive"`
+				IsSettingsDark                  bool   `json:"isSettingsDark"`
+				IsUndockedByDefault             bool   `json:"isUndockedByDefault"`
+				NoWhatsNew                      bool   `json:"noWhatsNew"`
+				PropertyPanelCollapse           bool   `json:"propertyPanelCollapse"`
+				PropertyPanelMultiMode          bool   `json:"propertyPanelMultiMode"`
+				RefreshButtonEnabled            bool   `json:"refreshButtonEnabled"`
+				RefreshRate                     string `json:"refreshRate"`
+				RefreshRateRememberAll          bool   `json:"refreshRateRememberAll"`
+				RowsPerPage                     int    `json:"rowsPerPage"`
+				ShowAllPanelActions             bool   `json:"showAllPanelActions"`
+				TimeFormat                      string `json:"timeFormat"`
+				Use24HourTime                   bool   `json:"use24HourTime"`
+				UseBrowserTheme                 bool   `json:"useBrowserTheme"`
+				UseSettingsPanelView            bool   `json:"useSettingsPanelView"`
+				WebsocketEnabled                bool   `json:"websocketEnabled"`
+				WithStickyTableActions          bool   `json:"withStickyTableActions"`
+			} `json:"preferences"`
+		} `json:"ui_settings"`
+	} `json:"data"`
+}

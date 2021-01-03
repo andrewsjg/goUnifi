@@ -273,5 +273,21 @@ func TestCountryCodes(t *testing.T) {
 		return
 	}
 
-	t.Logf("%d country codes found", len(countryCodes.Data))
+	t.Logf("%d country codes found\n", len(countryCodes.Data))
+}
+
+func TestLoggedInUser(t *testing.T) {
+	unifi := createClient()
+	ctx := context.Background()
+
+	loggedinUser, err := unifi.GetUser(ctx)
+
+	if err != nil {
+		t.Errorf("GetUser returned an error: %s", err)
+		return
+	}
+
+	if len(loggedinUser.Data) >= 1 {
+		t.Logf("%s is the current user\n", loggedinUser.Data[0].Name)
+	}
 }

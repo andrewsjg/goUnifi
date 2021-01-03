@@ -384,6 +384,26 @@ func (c *Unifi) GetCountryCodes(ctx context.Context) (CountryCodes, error) {
 	return countryCodes, nil
 }
 
+//GetUser - Retrieves the list of country codes
+func (c *Unifi) GetUser(ctx context.Context) (LoggedInUser, error) {
+	loggedinUser := LoggedInUser{}
+
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/s/%s/self", c.BaseURL, c.site), nil)
+
+	if err != nil {
+		return loggedinUser, err
+	}
+
+	req = req.WithContext(ctx)
+
+	if err := c.sendRequest(req, &loggedinUser); err != nil {
+		log.Println("ERROR: " + err.Error())
+		return loggedinUser, err
+	}
+
+	return loggedinUser, nil
+}
+
 // There must be a better way of doing this?
 func (c *Unifi) loginToken() (string, error) {
 
