@@ -224,6 +224,46 @@ func (c *Unifi) GetFirewallGroups(ctx context.Context) (FirewallGroups, error) {
 	return firewallGroups, nil
 }
 
+//GetWLANConf - Retrieves user defined firewall groups
+func (c *Unifi) GetWLANConf(ctx context.Context) (WLANConf, error) {
+	wlanConf := WLANConf{}
+
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/s/%s/rest/wlanconf", c.BaseURL, c.site), nil)
+
+	if err != nil {
+		return wlanConf, err
+	}
+
+	req = req.WithContext(ctx)
+
+	if err := c.sendRequest(req, &wlanConf); err != nil {
+		log.Println("ERROR: " + err.Error())
+		return wlanConf, err
+	}
+
+	return wlanConf, nil
+}
+
+//GetRogueAPs - Retrieves a list of Wireless AP's not part of the network that have been seen
+func (c *Unifi) GetRogueAPs(ctx context.Context) (RogueAPs, error) {
+	rogueAPs := RogueAPs{}
+
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/s/%s/stat/rogueap", c.BaseURL, c.site), nil)
+
+	if err != nil {
+		return rogueAPs, err
+	}
+
+	req = req.WithContext(ctx)
+
+	if err := c.sendRequest(req, &rogueAPs); err != nil {
+		log.Println("ERROR: " + err.Error())
+		return rogueAPs, err
+	}
+
+	return rogueAPs, nil
+}
+
 // There must be a better way of doing this?
 func (c *Unifi) loginToken() (string, error) {
 

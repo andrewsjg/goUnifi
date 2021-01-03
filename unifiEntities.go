@@ -455,3 +455,94 @@ type FirewallGroups struct {
 		SiteID       string   `json:"site_id"`
 	} `json:"data"`
 }
+
+//WLANConf - Wireless LAN Configurations
+type WLANConf struct {
+	Meta struct {
+		Rc string `json:"rc"`
+	} `json:"meta"`
+	Data []struct {
+		ID                        string        `json:"_id"`
+		XIappKey                  string        `json:"x_iapp_key"`
+		WpaMode                   string        `json:"wpa_mode"`
+		MinrateNaAdvertisingRates bool          `json:"minrate_na_advertising_rates"`
+		DtimNa                    int           `json:"dtim_na"`
+		IsGuest                   bool          `json:"is_guest"`
+		MinrateNaEnabled          bool          `json:"minrate_na_enabled"`
+		MinrateNgAdvertisingRates bool          `json:"minrate_ng_advertising_rates"`
+		Enabled                   bool          `json:"enabled"`
+		MacFilterPolicy           string        `json:"mac_filter_policy"`
+		Security                  string        `json:"security"`
+		WepIdx                    int           `json:"wep_idx"`
+		GroupRekey                int           `json:"group_rekey"`
+		MinrateNgEnabled          bool          `json:"minrate_ng_enabled"`
+		MinrateNgDataRateKbps     int           `json:"minrate_ng_data_rate_kbps"`
+		WpaEnc                    string        `json:"wpa_enc"`
+		WlangroupID               string        `json:"wlangroup_id"`
+		BcFilterEnabled           bool          `json:"bc_filter_enabled"`
+		XPassphrase               string        `json:"x_passphrase"`
+		MinrateNaBeaconRateKbps   int           `json:"minrate_na_beacon_rate_kbps"`
+		UsergroupID               string        `json:"usergroup_id"`
+		MacFilterList             []interface{} `json:"mac_filter_list"`
+		MinrateNaMgmtRateKbps     int           `json:"minrate_na_mgmt_rate_kbps"`
+		DtimMode                  string        `json:"dtim_mode"`
+		Schedule                  []interface{} `json:"schedule"`
+		MinrateNgBeaconRateKbps   int           `json:"minrate_ng_beacon_rate_kbps"`
+		MinrateNgMgmtRateKbps     int           `json:"minrate_ng_mgmt_rate_kbps"`
+		BcFilterList              []interface{} `json:"bc_filter_list"`
+		Name                      string        `json:"name"`
+		SiteID                    string        `json:"site_id"`
+		MinrateNaDataRateKbps     int           `json:"minrate_na_data_rate_kbps"`
+		HideSsid                  bool          `json:"hide_ssid"`
+		MacFilterEnabled          bool          `json:"mac_filter_enabled"`
+		DtimNg                    int           `json:"dtim_ng"`
+		Vlan                      string        `json:"vlan"`
+		VlanEnabled               bool          `json:"vlan_enabled"`
+		No2GhzOui                 bool          `json:"no2ghz_oui"`
+		MinrateNgCckRatesEnabled  bool          `json:"minrate_ng_cck_rates_enabled"`
+		NameCombineEnabled        bool          `json:"name_combine_enabled"`
+		ScheduleEnabled           bool          `json:"schedule_enabled,omitempty"`
+		ScheduleReversed          bool          `json:"schedule_reversed,omitempty"`
+		McastenhanceEnabled       bool          `json:"mcastenhance_enabled,omitempty"`
+		FastRoamingEnabled        bool          `json:"fast_roaming_enabled,omitempty"`
+		UapsdEnabled              bool          `json:"uapsd_enabled,omitempty"`
+		NameCombineSuffix         string        `json:"name_combine_suffix,omitempty"`
+		RadiusMacAuthEnabled      bool          `json:"radius_mac_auth_enabled,omitempty"`
+		RadiusMacaclFormat        string        `json:"radius_macacl_format,omitempty"`
+		RadiusMacaclEmptyPassword bool          `json:"radius_macacl_empty_password,omitempty"`
+		RadiusDasEnabled          bool          `json:"radius_das_enabled,omitempty"`
+	} `json:"data"`
+}
+
+//RogueAPs - AP's not part of the network that have been seen
+type RogueAPs struct {
+	Meta struct {
+		Rc string `json:"rc"`
+	} `json:"meta"`
+	Data []struct {
+		ID         string `json:"_id"`
+		ApMac      string `json:"ap_mac"`
+		Bssid      string `json:"bssid"`
+		SiteID     string `json:"site_id"`
+		Age        int    `json:"age"`
+		Band       string `json:"band"`
+		Bw         int    `json:"bw"`
+		CenterFreq int    `json:"center_freq"`
+		Channel    int    `json:"channel"`
+		Essid      string `json:"essid"`
+		Freq       int    `json:"freq"`
+		IsAdhoc    bool   `json:"is_adhoc"`
+		IsUbnt     bool   `json:"is_ubnt"`
+		Noise      int    `json:"noise"`
+		Rssi       int    `json:"rssi"`
+		RssiAge    int    `json:"rssi_age"`
+		Security   string `json:"security"`
+		Signal     int    `json:"signal"`
+		Radio      string `json:"radio"`
+		RadioName  string `json:"radio_name"`
+		LastSeen   int    `json:"last_seen"`
+		ReportTime int    `json:"report_time"`
+		IsRogue    bool   `json:"is_rogue"`
+		Oui        string `json:"oui"`
+	} `json:"data"`
+}

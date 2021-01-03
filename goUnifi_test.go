@@ -137,7 +137,7 @@ func TestGetFirewallGroups(t *testing.T) {
 	firewallGroups, err := unifi.GetFirewallGroups(ctx)
 
 	if err != nil {
-		t.Errorf("FirewallRules returned an error: %s", err)
+		t.Errorf("FirewallGroups returned an error: %s", err)
 		return
 	}
 
@@ -145,4 +145,35 @@ func TestGetFirewallGroups(t *testing.T) {
 	for _, fwRule := range firewallGroups.Data {
 		fmt.Println(fwRule.Name)
 	}
+}
+
+func TestGetWLANConf(t *testing.T) {
+	unifi := createClient()
+	ctx := context.Background()
+
+	wlanConf, err := unifi.GetWLANConf(ctx)
+
+	if err != nil {
+		t.Errorf("WLANConfs returned an error: %s", err)
+		return
+	}
+
+	fmt.Println("Wireless LANS:")
+	for _, wlan := range wlanConf.Data {
+		fmt.Println(wlan.Name)
+	}
+}
+
+func TestRogueAPs(t *testing.T) {
+	unifi := createClient()
+	ctx := context.Background()
+
+	rogueAPs, err := unifi.GetRogueAPs(ctx)
+
+	if err != nil {
+		t.Errorf("RogueAPs returned an error: %s", err)
+		return
+	}
+
+	fmt.Printf("%d Foriegn WIFI Networks Seen\n", len(rogueAPs.Data))
 }
