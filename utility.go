@@ -22,15 +22,6 @@ func findInSlice(slice []string, val string, caseSensitive bool) (int, bool) {
 	return -1, false
 }
 
-// True is the model passed in is known to the client
-/*
-func isKnownDeviceModel(model string) bool {
-	_, isKnown := findInSlice(UbiquitiDevices, model, false)
-
-	return isKnown
-}
-*/
-
 func isKnownDeviceModel(model string) bool {
 	devices := SiteDevices{}
 	isKnown := hasField(devices, model)
