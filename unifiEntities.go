@@ -587,7 +587,7 @@ type RadiusProfiles struct {
 	} `json:"data"`
 }
 
-//RadiusAccounts - Retrieve the details of Radius accounts
+//RadiusAccounts -  The details of Radius accounts
 type RadiusAccounts struct {
 	Meta struct {
 		Rc string `json:"rc"`
@@ -600,5 +600,61 @@ type RadiusAccounts struct {
 		TunnelMediumType int    `json:"tunnel_medium_type"`
 		Vlan             string `json:"vlan"`
 		SiteID           string `json:"site_id"`
+	} `json:"data"`
+}
+
+//PortForwardRules - Details of configured port forwarding rules
+type PortForwardRules struct {
+	Meta struct {
+		Rc string `json:"rc"`
+	} `json:"meta"`
+	Data []struct {
+		ID      string `json:"_id"`
+		Enabled bool   `json:"enabled"`
+		Name    string `json:"name"`
+		DstPort string `json:"dst_port"`
+		Fwd     string `json:"fwd"`
+		FwdPort string `json:"fwd_port"`
+		Log     bool   `json:"log,omitempty"`
+		Src     string `json:"src"`
+		Proto   string `json:"proto"`
+		SiteID  string `json:"site_id"`
+	} `json:"data"`
+}
+
+//RFChannels - Details of the wireless channels available and in use
+type RFChannels struct {
+	Meta struct {
+		Rc string `json:"rc"`
+	} `json:"meta"`
+	Data []struct {
+		ChannelsNa       []int  `json:"channels_na"`
+		ChannelsNa160    []int  `json:"channels_na_160"`
+		ChannelsNa40     []int  `json:"channels_na_40"`
+		ChannelsNa40Bcm  []int  `json:"channels_na_40_bcm"`
+		ChannelsNa80     []int  `json:"channels_na_80"`
+		ChannelsNa80Bcm  []int  `json:"channels_na_80_bcm"`
+		ChannelsNaBcm    []int  `json:"channels_na_bcm"`
+		ChannelsNaDfs    []int  `json:"channels_na_dfs"`
+		ChannelsNaIndoor []int  `json:"channels_na_indoor"`
+		ChannelsNg       []int  `json:"channels_ng"`
+		ChannelsNg40     []int  `json:"channels_ng_40"`
+		ChannelsNg40Bcm  []int  `json:"channels_ng_40_bcm"`
+		ChannelsNgBcm    []int  `json:"channels_ng_bcm"`
+		Code             string `json:"code"`
+		Key              string `json:"key"`
+		Name             string `json:"name"`
+	} `json:"data"`
+}
+
+//CountryCodes - Dictionary of country codes used
+type CountryCodes struct {
+	Meta struct {
+		Rc string `json:"rc"`
+	} `json:"meta"`
+	Data []struct {
+		Code string `json:"code"`
+		Name string `json:"name"`
+		Key  string `json:"key"`
 	} `json:"data"`
 }

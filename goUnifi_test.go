@@ -228,3 +228,50 @@ func TestRadiusAccounts(t *testing.T) {
 		fmt.Println(radiusAccount.Name)
 	}
 }
+
+func TestPortForwardRules(t *testing.T) {
+	unifi := createClient()
+	ctx := context.Background()
+
+	portForwardRules, err := unifi.GetPortForwardRules(ctx)
+
+	if err != nil {
+		t.Errorf("PortForwardRules returned an error: %s", err)
+		return
+	}
+
+	fmt.Println("Port Forwarding Rules:")
+	for _, portForwardRule := range portForwardRules.Data {
+		t.Log(portForwardRule.Name)
+	}
+}
+
+func TestRFChannels(t *testing.T) {
+	unifi := createClient()
+	ctx := context.Background()
+
+	rfChannels, err := unifi.GetRFChannels(ctx)
+
+	if err != nil {
+		t.Errorf("RFChannels returned an error: %s", err)
+		return
+	}
+
+	if len(rfChannels.Data) >= 1 {
+		t.Logf("Configured Country is %s\n", rfChannels.Data[0].Name)
+	}
+}
+
+func TestCountryCodes(t *testing.T) {
+	unifi := createClient()
+	ctx := context.Background()
+
+	countryCodes, err := unifi.GetCountryCodes(ctx)
+
+	if err != nil {
+		t.Errorf("CountryCodes returned an error: %s", err)
+		return
+	}
+
+	t.Logf("%d country codes found", len(countryCodes.Data))
+}

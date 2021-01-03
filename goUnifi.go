@@ -324,6 +324,66 @@ func (c *Unifi) GetRadiusAccounts(ctx context.Context) (RadiusAccounts, error) {
 	return radiusAccounts, nil
 }
 
+//GetPortForwardRules - Retrieves a list of configured port profiles
+func (c *Unifi) GetPortForwardRules(ctx context.Context) (PortForwardRules, error) {
+	portForwardRules := PortForwardRules{}
+
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/s/%s/rest/portforward", c.BaseURL, c.site), nil)
+
+	if err != nil {
+		return portForwardRules, err
+	}
+
+	req = req.WithContext(ctx)
+
+	if err := c.sendRequest(req, &portForwardRules); err != nil {
+		log.Println("ERROR: " + err.Error())
+		return portForwardRules, err
+	}
+
+	return portForwardRules, nil
+}
+
+//GetRFChannels - Retrieves RF Channel details
+func (c *Unifi) GetRFChannels(ctx context.Context) (RFChannels, error) {
+	rfChannels := RFChannels{}
+
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/s/%s/stat/current-channel", c.BaseURL, c.site), nil)
+
+	if err != nil {
+		return rfChannels, err
+	}
+
+	req = req.WithContext(ctx)
+
+	if err := c.sendRequest(req, &rfChannels); err != nil {
+		log.Println("ERROR: " + err.Error())
+		return rfChannels, err
+	}
+
+	return rfChannels, nil
+}
+
+//GetCountryCodes - Retrieves the list of country codes
+func (c *Unifi) GetCountryCodes(ctx context.Context) (CountryCodes, error) {
+	countryCodes := CountryCodes{}
+
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/s/%s/stat/ccode", c.BaseURL, c.site), nil)
+
+	if err != nil {
+		return countryCodes, err
+	}
+
+	req = req.WithContext(ctx)
+
+	if err := c.sendRequest(req, &countryCodes); err != nil {
+		log.Println("ERROR: " + err.Error())
+		return countryCodes, err
+	}
+
+	return countryCodes, nil
+}
+
 // There must be a better way of doing this?
 func (c *Unifi) loginToken() (string, error) {
 
