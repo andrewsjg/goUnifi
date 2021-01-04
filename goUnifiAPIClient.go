@@ -1,10 +1,14 @@
 package gounifi
 
 import (
+	"crypto/tls"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"net/http/cookiejar"
+	"strings"
 	"time"
 
 	"golang.org/x/net/publicsuffix"
@@ -29,6 +33,7 @@ func NewUnifi(username string, password string, site string) *Unifi {
 	// Not really using the cookie jar here. Leaving in place because I might revisit
 	jar, err := cookiejar.New(&cookiejar.Options{PublicSuffixList: publicsuffix.List})
 	if err != nil { // TODO: error handling
+		panic("Unable to create API Client. Cookie Jar creation failed: " + err.Error())
 	}
 
 	return &Unifi{
@@ -81,4 +86,56 @@ func (c *Unifi) sendRequest(req *http.Request, v interface{}) error {
 	}
 
 	return nil
+}
+
+// There must be a better way of doing this?
+func (c *Unifi) loginToken() (string, error) {
+
+	loginToken := ""
+
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	url := baseURL + "/login"
+
+	payload := strings.NewReader("{\"username\":\"" + c.userName + "\",\"password\":\"" + c.password + "\"}")
+
+	req, _ := http.NewRequest("POST", url, payload)
+
+	req.Header.Add("Content-Type", "text/plain")
+	req.Header.Add("User-Agent", "Golang")
+	req.Header.Add("Accept", "*/*")
+	req.Header.Add("Cache-Control", "no-cache")
+	req.Header.Add("accept-encoding", "gzip, deflate")
+	req.Header.Add("content-length", "44")
+	req.Header.Add("Connection", "keep-alive")
+	req.Header.Add("cache-control", "no-cache")
+
+	res, err := http.DefaultClient.Do(req)
+
+	if err != nil {
+		log.Println("ERROR: " + err.Error())
+		return "", err
+	}
+
+	defer res.Body.Close()
+
+	authResponse := AuthResponse{}
+
+	if err = json.NewDecoder(res.Body).Decode(&authResponse); err != nil {
+		return "", err
+	}
+
+	if authResponse.Meta.Rc != "ok" {
+		return "", errors.New("API Authentication Failed")
+	}
+
+	//body, _ := ioutil.ReadAll(res.Body)
+	//log.Println("Auth Response: " + string(body))
+
+	for _, cookie := range res.Cookies() {
+		if cookie.Name == "unifises" {
+			loginToken = cookie.Value
+		}
+	}
+
+	return loginToken, nil
 }

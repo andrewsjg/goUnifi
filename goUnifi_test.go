@@ -7,6 +7,8 @@ import (
 	"testing"
 )
 
+// TODO: Improve all these tests beyond just checking the API calls return
+
 func createClient() *Unifi {
 	userName := os.Getenv("UNIFI_USER")
 	password := os.Getenv("UNIFI_PASSWORD")
@@ -289,5 +291,22 @@ func TestLoggedInUser(t *testing.T) {
 
 	if len(loggedinUser.Data) >= 1 {
 		t.Logf("%s is the current user\n", loggedinUser.Data[0].Name)
+	}
+}
+
+func TestNetworkConfig(t *testing.T) {
+	unifi := createClient()
+	ctx := context.Background()
+
+	networkConfig, err := unifi.GetNetworkConfig(ctx)
+
+	if err != nil {
+		t.Errorf("GetNetworkConfig returned an error: %s", err)
+		return
+	}
+
+	t.Log("Networks: ")
+	for _, configItem := range networkConfig.ConfigItems {
+		t.Log(configItem.Name)
 	}
 }

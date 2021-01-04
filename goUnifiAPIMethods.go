@@ -2,14 +2,13 @@ package gounifi
 
 import (
 	"context"
-	"crypto/tls"
-	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
 )
+
+// Most of these functions are the same boilerplate.
+// TODO: Investigate if there is a way of condensing the common parts. Could use reflect here? Performance and complexity penalty might not be worth it?
 
 //GetSiteHealth Calls /api/s/<site>/stat/health
 func (c *Unifi) GetSiteHealth(ctx context.Context) (*SiteHealth, error) {
@@ -369,54 +368,42 @@ func (c *Unifi) GetUser(ctx context.Context) (LoggedInUser, error) {
 	return loggedinUser, nil
 }
 
-// There must be a better way of doing this?
-func (c *Unifi) loginToken() (string, error) {
+//GetNetworkConfig - Retrieves the configuration of all networks
+func (c *Unifi) GetNetworkConfig(ctx context.Context) (NetworkConfig, error) {
+	networkConfig := NetworkConfig{}
 
-	loginToken := ""
-
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-	url := baseURL + "/login"
-
-	payload := strings.NewReader("{\"username\":\"" + c.userName + "\",\"password\":\"" + c.password + "\"}")
-
-	req, _ := http.NewRequest("POST", url, payload)
-
-	req.Header.Add("Content-Type", "text/plain")
-	req.Header.Add("User-Agent", "Golang")
-	req.Header.Add("Accept", "*/*")
-	req.Header.Add("Cache-Control", "no-cache")
-	req.Header.Add("accept-encoding", "gzip, deflate")
-	req.Header.Add("content-length", "44")
-	req.Header.Add("Connection", "keep-alive")
-	req.Header.Add("cache-control", "no-cache")
-
-	res, err := http.DefaultClient.Do(req)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/s/%s/rest/networkconf", c.BaseURL, c.site), nil)
 
 	if err != nil {
+		return networkConfig, err
+	}
+
+	req = req.WithContext(ctx)
+
+	if err := c.sendRequest(req, &networkConfig); err != nil {
 		log.Println("ERROR: " + err.Error())
-		return "", err
+		return networkConfig, err
 	}
 
-	defer res.Body.Close()
+	return networkConfig, nil
+}
 
-	authResponse := AuthResponse{}
+//GetEvents - Gets events fron the number of hours back start at a particular event
+func (c *Unifi) GetEvents(ctx context.Context, hours int, start int) (Events, error) {
+	events := Events{}
 
-	if err = json.NewDecoder(res.Body).Decode(&authResponse); err != nil {
-		return "", err
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/s/%s/stat/event", c.BaseURL, c.site), nil)
+
+	if err != nil {
+		return events, err
 	}
 
-	if authResponse.Meta.Rc != "ok" {
-		return "", errors.New("API Authentication Failed")
+	req = req.WithContext(ctx)
+
+	if err := c.sendRequest(req, &events); err != nil {
+		log.Println("ERROR: " + err.Error())
+		return events, err
 	}
 
-	//body, _ := ioutil.ReadAll(res.Body)
-	//log.Println("Auth Response: " + string(body))
-
-	for _, cookie := range res.Cookies() {
-		if cookie.Name == "unifises" {
-			loginToken = cookie.Value
-		}
-	}
-
-	return loginToken, nil
+	return events, nil
 }

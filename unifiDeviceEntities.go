@@ -1,7 +1,6 @@
 package gounifi
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"time"
@@ -39,9 +38,6 @@ type Devices struct {
 	Data []json.RawMessage `json:"data"`
 }
 
-//SiteDevices is a container for all devices in a site. The key should alsays be one of the devices listed in the catalog above
-type mSiteDevices map[string][]interface{}
-
 // This is the cleanest way I have found so far of doing this. It ensures all devices are parsed out nicely but it requires this struct of ALL known
 // devices to work. However this does allow me to use this struct as a catalog of all known devices and ensures that when parsing out the JSON responses
 // they will unmarshal nicely into the correct type
@@ -72,7 +68,7 @@ func (sd *SiteDevices) Update(deviceData json.RawMessage) error {
 		model, ok := iModel.(string)
 
 		if !ok {
-			return errors.New("Unable to determine model")
+			return errors.New("unable to determine model")
 		}
 
 		// Add model to SiteDevices
@@ -1274,19 +1270,6 @@ type USC8 struct {
 	UserNumSta       int         `json:"user-num_sta"`
 	GuestNumSta      int         `json:"guest-num_sta"`
 	XHasSSHHostkey   bool        `json:"x_has_ssh_hostkey"`
-}
-
-func (u *USC8) unmarshal(raw json.RawMessage) bool {
-	dec := json.NewDecoder(bytes.NewReader(raw))
-
-	// This could cause issues down the road if new fields are added.
-	dec.DisallowUnknownFields()
-
-	if err := dec.Decode(u); err != nil {
-		return false
-	}
-
-	return true
 }
 
 //SwitchStats -  Stats data for an 8 port switch. I will add more ports defitions when I see the same stats structure for a bigger switch. Can use 'omitempty' to remove fields

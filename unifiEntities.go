@@ -736,3 +736,73 @@ type LoggedInUser struct {
 		} `json:"ui_settings"`
 	} `json:"data"`
 }
+
+//NetworkConfig - Network configurations
+type NetworkConfig struct {
+	Meta struct {
+		Rc string `json:"rc"`
+	} `json:"meta"`
+	ConfigItems []NetworkConfigItem `json:"data"`
+}
+
+//NetworkConfigItem - A network configuration item
+type NetworkConfigItem struct {
+	ID                     string `json:"_id"`
+	IsNat                  bool   `json:"is_nat,omitempty"`
+	DhcpdDNSEnabled        bool   `json:"dhcpd_dns_enabled,omitempty"`
+	Purpose                string `json:"purpose"`
+	DhcpdLeasetime         int    `json:"dhcpd_leasetime,omitempty"`
+	DhcpdGatewayEnabled    bool   `json:"dhcpd_gateway_enabled,omitempty"`
+	DhcpdTimeOffsetEnabled bool   `json:"dhcpd_time_offset_enabled,omitempty"`
+	DhcpdStart             string `json:"dhcpd_start,omitempty"`
+	DhcpRelayEnabled       bool   `json:"dhcp_relay_enabled,omitempty"`
+	DhcpdStop              string `json:"dhcpd_stop,omitempty"`
+	Enabled                bool   `json:"enabled,omitempty"`
+	DomainName             string `json:"domain_name,omitempty"`
+	DhcpdEnabled           bool   `json:"dhcpd_enabled,omitempty"`
+	IPSubnet               string `json:"ip_subnet,omitempty"`
+	Networkgroup           string `json:"networkgroup,omitempty"`
+	Name                   string `json:"name"`
+	SiteID                 string `json:"site_id"`
+	AttrNoDelete           bool   `json:"attr_no_delete,omitempty"`
+	AttrHiddenID           string `json:"attr_hidden_id,omitempty"`
+	VlanEnabled            bool   `json:"vlan_enabled,omitempty"`
+	Ipv6InterfaceType      string `json:"ipv6_interface_type,omitempty"`
+	DhcpdDNS1              string `json:"dhcpd_dns_1,omitempty"`
+	DhcpdDNS2              string `json:"dhcpd_dns_2,omitempty"`
+	DhcpdDNS3              string `json:"dhcpd_dns_3,omitempty"`
+	LteLanEnabled          bool   `json:"lte_lan_enabled,omitempty"`
+	UpnpLanEnabled         bool   `json:"upnp_lan_enabled,omitempty"`
+	Ipv6PdStart            string `json:"ipv6_pd_start,omitempty"`
+	Ipv6PdStop             string `json:"ipv6_pd_stop,omitempty"`
+	IgmpSnooping           bool   `json:"igmp_snooping,omitempty"`
+	Vlan                   string `json:"vlan,omitempty"`
+	DhcpdWpadURL           string `json:"dhcpd_wpad_url,omitempty"`
+	DhcpdBootEnabled       bool   `json:"dhcpd_boot_enabled,omitempty"`
+	DhcpdNtpEnabled        bool   `json:"dhcpd_ntp_enabled,omitempty"`
+	DhcpdTftpServer        string `json:"dhcpd_tftp_server,omitempty"`
+	DhcpdUnifiController   string `json:"dhcpd_unifi_controller,omitempty"`
+	DhcpguardEnabled       bool   `json:"dhcpguard_enabled,omitempty"`
+	DhcpdWinsEnabled       bool   `json:"dhcpd_wins_enabled,omitempty"`
+	Ipv6RaEnabled          bool   `json:"ipv6_ra_enabled,omitempty"`
+	VpnType                string `json:"vpn_type,omitempty"`
+	XIpsecPreSharedKey     string `json:"x_ipsec_pre_shared_key,omitempty"`
+	RadiusprofileID        string `json:"radiusprofile_id,omitempty"`
+	RequireMschapv2        bool   `json:"require_mschapv2,omitempty"`
+	ExposedToSiteVpn       bool   `json:"exposed_to_site_vpn,omitempty"`
+	WanNetworkgroup        string `json:"wan_networkgroup,omitempty"`
+	WanType                string `json:"wan_type,omitempty"`
+	WanIP                  string `json:"wan_ip,omitempty"`
+	WanNetmask             string `json:"wan_netmask,omitempty"`
+	WanGateway             string `json:"wan_gateway,omitempty"`
+	WanDNS1                string `json:"wan_dns1,omitempty"`
+	WanDNS2                string `json:"wan_dns2,omitempty"`
+	WanTypeV6              string `json:"wan_type_v6,omitempty"`
+	ReportWanEvent         bool   `json:"report_wan_event,omitempty"`
+	WanLoadBalanceType     string `json:"wan_load_balance_type,omitempty"`
+	WanLoadBalanceWeight   int    `json:"wan_load_balance_weight,omitempty"`
+	WanVlanEnabled         bool   `json:"wan_vlan_enabled,omitempty"`
+	WanVlan                int    `json:"wan_vlan,omitempty"`
+	WanEgressQos           string `json:"wan_egress_qos,omitempty"`
+	WanSmartqEnabled       bool   `json:"wan_smartq_enabled,omitempty"`
+}
