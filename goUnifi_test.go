@@ -310,3 +310,22 @@ func TestNetworkConfig(t *testing.T) {
 		t.Log(configItem.Name)
 	}
 }
+
+func TestEvents(t *testing.T) {
+	unifi := createClient()
+	ctx := context.Background()
+
+	eventList, err := unifi.GetEvents(ctx, 1, 1, 10)
+
+	if err != nil {
+		t.Errorf("GetEvents returned an error: %s", err)
+		return
+	}
+
+	fmt.Println(("Last 10 messages:"))
+	for count, event := range eventList.Events {
+
+		fmt.Printf("Msg No: %d msg: %s\n", count, event.Msg)
+	}
+
+}

@@ -1,6 +1,7 @@
 package gounifi
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"log"
@@ -389,10 +390,14 @@ func (c *Unifi) GetNetworkConfig(ctx context.Context) (NetworkConfig, error) {
 }
 
 //GetEvents - Gets events fron the number of hours back start at a particular event
-func (c *Unifi) GetEvents(ctx context.Context, hours int, start int) (Events, error) {
+func (c *Unifi) GetEvents(ctx context.Context, within int, start int, limit int) (Events, error) {
 	events := Events{}
 
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/s/%s/stat/event", c.BaseURL, c.site), nil)
+	jsonString := fmt.Sprintf(`{"_sort":"-time","within":"%d","_start":"%d","_limit":"%d"}`, within, start, limit)
+	jsonData := []byte(jsonString)
+
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/s/%s/stat/event", c.BaseURL, c.site), bytes.NewBuffer(jsonData))
+	req.Header.Set("Content-Type", "application/json")
 
 	if err != nil {
 		return events, err
